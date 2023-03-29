@@ -1,50 +1,73 @@
-// import { mockedAuthorsList } from '../../constants';
+import { Button } from '../../common/Button/Button';
+import { Input } from '../../common/Input/Input';
+import { BUTTONS_TEXT, mockedAuthorsList } from '../../constants';
+import {
+	StyledAuthorBlock,
+	StyledAuthorChange,
+	StyledAuthorWrapper,
+	StyledDataInnerWrapper,
+	StyledForm,
+	StyledTitleWrapper,
+	StyledInnerWrapper,
+} from './CreateCourse.style';
 
-export const CreateCourse = () => <div>Creation course</div>;
+// export const CreateCourse = () => <div>Creation course</div>;
 
-// export const CreateCourse = () => {
+const CreateCourse = () => {
+	return (
+		<div>
+			<StyledForm action='submit'>
+				<StyledTitleWrapper>
+					<StyledInnerWrapper>
+						<Input />
+					</StyledInnerWrapper>
+					<Button text={BUTTONS_TEXT.CREATE_COURSE} />
+				</StyledTitleWrapper>
+				<textarea name='Description' id='descrInput' cols={30} rows={10}>
+					Enter description
+				</textarea>
+				<StyledAuthorWrapper>
+					<StyledAuthorBlock>
+						<StyledDataInnerWrapper>
+							<h3>Add author</h3>
+							<Input />
+							<Button text={BUTTONS_TEXT.CREATE_AUTHOR} />
+						</StyledDataInnerWrapper>
+						<StyledDataInnerWrapper>
+							<h3>Duration</h3>
+							<Input />
+							<h2>
+								Duration: <strong>00:00</strong> hours
+							</h2>
+						</StyledDataInnerWrapper>
+					</StyledAuthorBlock>
+					<StyledAuthorBlock>
+						<h3>Authors</h3>
+						<StyledDataInnerWrapper>
+							{mockedAuthorsList.map((author) => (
+								<StyledAuthorChange>
+									<p>{author.name}</p>
+									<Button text={BUTTONS_TEXT.ADD_AUTHOR} />
+								</StyledAuthorChange>
+							))}
+						</StyledDataInnerWrapper>
+						<h3>Course authors</h3>
+						<StyledDataInnerWrapper>
+							{mockedAuthorsList.map((author) => (
+								<StyledAuthorChange>
+									<p>{author.name}</p>
+									<Button text={BUTTONS_TEXT.DEL_AUTHOR} />
+								</StyledAuthorChange>
+							))}
+						</StyledDataInnerWrapper>
+					</StyledAuthorBlock>
+				</StyledAuthorWrapper>
+			</StyledForm>
+		</div>
+	);
+};
 
-//     return (
-//         <div>
-//             <form action="submit">
-//                 <div>
-//                     <Input />
-//                     <Button text='Create course' />
-//                 </div>
-//                 <textarea
-//                     name="Description"
-//                     id="descrInput"
-//                     cols="30" rows="10"
-//                 >
-//                     Enter description
-//                 </textarea>
-//                 <div>
-//                     <div>
-//                         <div>
-//                             <div>
-//                                 <h3>Add author</h3>
-//                                 <Input />
-//                                 <Button text='Create author' />
-//                             </div>
-//                             <div>
-//                                 <h3>Duration</h3>
-//                                 <Input />
-//                                 <h2>Duration: <strong>00:00</strong> hours</h2>
-//                             </div>
-//                         </div>
-//                         <div>
-//                             <h3>Authors</h3>
-//                             <div>
-//                                 {mockedAuthorsList.map(author => )}
-//                             </div>
-//                         </div>
-//                     </div>
-
-//                 </div>
-//             </form>
-//         </div>
-//     )
-// }
+export default CreateCourse;
 
 /////////////////////////////////////////////////////////////////
 

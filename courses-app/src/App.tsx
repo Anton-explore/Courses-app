@@ -1,14 +1,13 @@
-import React from 'react';
-// import './App.css';
-import { Courses } from './components/Courses/Cources';
+import { StyledWrapper } from './App.style';
+import Courses from './components/Courses/Courses';
 import Header from './components/Header/Header';
 
 function App() {
 	return (
-		<div>
+		<StyledWrapper>
 			<Header />
 			<Courses />
-		</div>
+		</StyledWrapper>
 	);
 }
 

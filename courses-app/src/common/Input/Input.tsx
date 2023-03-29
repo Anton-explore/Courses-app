@@ -1,15 +1,10 @@
-export const Input = ({
-	placeholder,
-	value,
-	onChange,
-}: {
-	placeholder?: string;
-	value: string;
-	onChange: (event: React.ChangeEvent<HTMLInputElement>) => void;
-}) => {
+import { InputProps } from '../../types';
+import { StyledInput } from './Input.style';
+
+export const Input = ({ placeholder, value, onChange }: InputProps) => {
 	return (
 		<>
-			<input
+			<StyledInput
 				id='courseFilter'
 				type='text'
 				placeholder={placeholder}

@@ -48,9 +48,15 @@ import { Button } from '../../../../common/Button/Button';
 
 import { FC } from 'react';
 import { AuthorType, CourseType } from '../../../../types';
-import { mockedAuthorsList } from '../../../../constants';
+import { BUTTONS_TEXT, mockedAuthorsList } from '../../../../constants';
 import { formatDuration } from '../../../../helpers/pipeDuration';
 import { formatAuthors } from '../../../../helpers/dateGenerator';
+import {
+	StyledCardWrapper,
+	StyledDataWrapper,
+	StyledInnerWrapper,
+	StyledTextWrapper,
+} from './CourseCard.style';
 
 // type CourseCardProps = {
 // 	course: CourseType;
@@ -72,14 +78,26 @@ const CourseCard: FC<CourseType> = (course) => {
 	const filteredAuthors = findAuthors(mockedAuthorsList, authors);
 
 	return (
-		<div key={id}>
-			<h2>{title}</h2>
-			<p>Duration: {formatDuration(duration)}</p>
-			<p>Creation date: {creationDate}</p>
-			<p>Description: {description}</p>
-			<p>Authors: {formatAuthors(filteredAuthors)}</p>
-			<Button text='Show course' />
-		</div>
+		<StyledCardWrapper key={id}>
+			<StyledTextWrapper>
+				<h2>{title}</h2>
+				<p>{description}</p>
+			</StyledTextWrapper>
+			<StyledDataWrapper>
+				<StyledInnerWrapper>
+					<p>
+						<strong>Authors:</strong> {formatAuthors(filteredAuthors)}
+					</p>
+					<p>
+						<strong>Duration:</strong> {formatDuration(duration)}
+					</p>
+					<p>
+						<strong>Created:</strong> {creationDate}
+					</p>
+				</StyledInnerWrapper>
+				<Button text={BUTTONS_TEXT.SHOW} />
+			</StyledDataWrapper>
+		</StyledCardWrapper>
 	);
 };
 

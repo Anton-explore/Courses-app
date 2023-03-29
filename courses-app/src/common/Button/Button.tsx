@@ -1,8 +1,6 @@
-export type ButtonProps = {
-	text: string;
-	onClick?: () => void;
-};
+import { ButtonProps } from '../../types';
+import { StyledButton } from './Button.style';
 
 export const Button = ({ text, onClick }: ButtonProps) => (
-	<button onClick={onClick}>{text}</button>
+	<StyledButton onClick={onClick}>{text}</StyledButton>
 );

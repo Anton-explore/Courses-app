@@ -11,3 +11,19 @@ export type AuthorType = {
 	id: string;
 	name: string;
 };
+
+export type InputProps = {
+	placeholder?: string;
+	value?: string;
+	onChange?: (event: React.ChangeEvent<HTMLInputElement>) => void;
+};
+
+export type ButtonProps = {
+	text: string;
+	onClick?: () => void;
+};
+
+export type SearchBarProps = {
+	courses: CourseType[];
+	onSearch: (results: CourseType[]) => void;
+};
