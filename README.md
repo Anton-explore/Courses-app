@@ -4,7 +4,8 @@ Educational React Project
 
 ## Criteria (20 points max)
 
-Common
+# Common
+
 [1 point] - The architecture of the application should be the same as presented above.
 [1 point] - Components are presented as function components (not class components).
 [1 point] - Use .jsx extensions for files with jsx syntax.
