@@ -1,7 +1,7 @@
 import { FC, useMemo } from 'react';
 
-import { CourseType } from '../../../../types';
-import { BUTTONS_TEXT, mockedAuthorsList } from '../../../../constants';
+import { CourseCardType } from '../../../../types';
+import { BUTTONS_TEXT } from '../../../../constants';
 import { formatDuration } from '../../../../helpers/pipeDuration';
 import { formatAuthors } from '../../../../helpers/authorFormatHelper';
 
@@ -14,26 +14,15 @@ import {
 	StyledTextWrapper,
 } from './CourseCard.style';
 
-const CourseCard: FC<CourseType> = (course) => {
+const CourseCard: FC<CourseCardType> = ({ course, allAuthors }) => {
 	const { id, title, duration, creationDate, description, authors } = course;
-
-	// const findAuthors = (authorsArr: AuthorType[], authors: string[]) => {
-	// 	return authors.map((authorId) => {
-	// 		const author = authorsArr.find(
-	// 			(authorName) => authorName.id === authorId
-	// 		);
-	// 		return author ? author.name : '';
-	// 	});
-	// };
-
-	// const filteredAuthors = findAuthors(mockedAuthorsList, authors);
 
 	const filteredAuthors = useMemo(() => {
 		return authors.map((authorId) => {
-			const author = mockedAuthorsList.find((author) => author.id === authorId);
+			const author = allAuthors.find((author) => author.id === authorId);
 			return author ? author.name : '';
 		});
-	}, [authors]);
+	}, [authors, allAuthors]);
 
 	return (
 		<StyledCardWrapper key={id}>

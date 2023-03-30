@@ -3,10 +3,10 @@ import { v4 as uuid } from 'uuid';
 
 import { Button } from '../../common/Button/Button';
 import { Input } from '../../common/Input/Input';
-import { BUTTONS_TEXT, INPUTS_TEXT, mockedAuthorsList } from '../../constants';
+import { BUTTONS_TEXT, INPUTS_TEXT } from '../../constants';
 import { formatDate } from '../../helpers/dateGenerator';
 import { formatDuration } from '../../helpers/pipeDuration';
-import { AuthorType, CourseType } from '../../types';
+import { AuthorType, CourseType, CreateCourseProps } from '../../types';
 import {
 	StyledAuthorBlock,
 	StyledAuthorChange,
@@ -26,13 +26,9 @@ const initialFormState: CourseType = {
 	authors: [],
 };
 
-type CreateCourseProps = {
-	onAdd: (results: CourseType) => void;
-};
-
-const CreateCourse = ({ onAdd }: CreateCourseProps) => {
+const CreateCourse: React.FC<CreateCourseProps> = ({ onAdd, authors }) => {
 	const [newCourse, setNewCourse] = useState<CourseType>(initialFormState);
-	const [allAuthors, setAllAuthors] = useState<AuthorType[]>(mockedAuthorsList);
+	const [allAuthors, setAllAuthors] = useState<AuthorType[]>(authors);
 	const [courseAuthors, setCourseAuthors] = useState<AuthorType[]>([]);
 	const [newAuthor, setNewAuthor] = useState('');
 
@@ -73,7 +69,7 @@ const CreateCourse = ({ onAdd }: CreateCourseProps) => {
 			return;
 		}
 		const addNewCourse = addProperties();
-		onAdd(addNewCourse);
+		onAdd(addNewCourse, courseAuthors);
 		setNewCourse(initialFormState);
 	};
 
@@ -94,7 +90,6 @@ const CreateCourse = ({ onAdd }: CreateCourseProps) => {
 			name: newAuthor,
 		};
 		setAllAuthors([...allAuthors, newAuthorData]);
-		mockedAuthorsList.push(newAuthorData);
 		setNewAuthor('');
 	};
 	const authorInsertHandler = (author: AuthorType) => {

@@ -29,3 +29,13 @@ export type SearchBarProps = {
 	courses: CourseType[];
 	onSearch: (results: CourseType[]) => void;
 };
+
+export type CourseCardType = {
+	course: CourseType;
+	allAuthors: AuthorType[];
+};
+
+export type CreateCourseProps = {
+	authors: AuthorType[];
+	onAdd: (course: CourseType, authors: AuthorType[]) => void;
+};

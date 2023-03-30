@@ -6,6 +6,7 @@ export const StyledButton = styled.button`
 	margin: 10px;
 	display: flex;
 	justify-content: center;
+	align-items: center;
 	gap: 10px;
 	background-color: transparent;
 	&:active,

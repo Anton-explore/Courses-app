@@ -1,6 +1,10 @@
 import { useState } from 'react';
 
-import { BUTTONS_TEXT, mockedCoursesList } from '../../constants';
+import {
+	BUTTONS_TEXT,
+	mockedAuthorsList,
+	mockedCoursesList,
+} from '../../constants';
 
 import { Button } from '../../common/Button/Button';
 import CreateCourse from '../CreateCourse/CreateCourse';
@@ -8,12 +12,13 @@ import CourseCard from './components/CourseCard/CourseCard';
 import SearchBar from './components/SearchBar/SearchBar';
 
 import { StyledCourses, StyledHeadingCourses } from './Courses.style';
-import { CourseType } from '../../types';
+import { AuthorType, CourseType } from '../../types';
 
 const Courses = () => {
 	const [courseFormVisible, setCourseFormVisible] = useState(false);
 	const [courses, setCourses] = useState(mockedCoursesList);
 	const [filteredCourses, setFilteredCourses] = useState(courses);
+	const [authors, setAuthors] = useState(mockedAuthorsList);
 
 	const addingCourseHandler = () => {
 		setCourseFormVisible(!courseFormVisible);
@@ -23,9 +28,13 @@ const Courses = () => {
 		setFilteredCourses(courses);
 	};
 
-	const creationCoursesHandler = (course: CourseType) => {
+	const creationCoursesHandler = (
+		course: CourseType,
+		courseAuthors: AuthorType[]
+	) => {
 		setCourses([...courses, course]);
-		mockedCoursesList.push(course);
+		setFilteredCourses([...courses, course]);
+		setAuthors([...authors, ...courseAuthors]);
 		setCourseFormVisible(!courseFormVisible);
 	};
 
@@ -40,10 +49,10 @@ const Courses = () => {
 				)}
 			</StyledHeadingCourses>
 			{courseFormVisible ? (
-				<CreateCourse onAdd={creationCoursesHandler} />
+				<CreateCourse onAdd={creationCoursesHandler} authors={authors} />
 			) : filteredCourses.length ? (
 				filteredCourses.map((course) => (
-					<CourseCard key={course.id} {...course} />
+					<CourseCard key={course.id} course={course} allAuthors={authors} />
 				))
 			) : (
 				<p>Sorry, i can't find anything</p>
