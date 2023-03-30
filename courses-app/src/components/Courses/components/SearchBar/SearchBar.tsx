@@ -16,7 +16,7 @@ const SearchBar: React.FC<SearchBarProps> = ({ courses, onSearch }) => {
 	};
 
 	const handleSearchClick = () => {
-		if (searchTerm === '') {
+		if (!searchTerm) {
 			onSearch(courses);
 		}
 		const results = courses.filter((course) => {

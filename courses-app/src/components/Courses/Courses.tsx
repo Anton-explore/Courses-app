@@ -11,12 +11,12 @@ import { StyledCourses, StyledHeadingCourses } from './Courses.style';
 import { CourseType } from '../../types';
 
 const Courses = () => {
-	const [newCourse, setNewCourse] = useState(false);
+	const [courseFormVisible, setCourseFormVisible] = useState(false);
 	const [courses, setCourses] = useState(mockedCoursesList);
 	const [filteredCourses, setFilteredCourses] = useState(courses);
 
 	const addingCourseHandler = () => {
-		setNewCourse((prev) => !prev);
+		setCourseFormVisible(!courseFormVisible);
 	};
 
 	const filteringCoursesHandler = (courses: CourseType[]) => {
@@ -24,23 +24,22 @@ const Courses = () => {
 	};
 
 	const creationCoursesHandler = (course: CourseType) => {
-		setCourses((prev) => [...prev, course]);
+		setCourses([...courses, course]);
 		mockedCoursesList.push(course);
-		setNewCourse((prev) => !prev);
+		setCourseFormVisible(!courseFormVisible);
 	};
 
 	return (
 		<StyledCourses>
 			<StyledHeadingCourses>
-				{!newCourse && (
+				{!courseFormVisible && (
 					<SearchBar courses={courses} onSearch={filteringCoursesHandler} />
 				)}
-				<Button
-					text={!newCourse ? BUTTONS_TEXT.ADD : BUTTONS_TEXT.SHOWALL}
-					onClick={addingCourseHandler}
-				/>
+				{!courseFormVisible && (
+					<Button text={BUTTONS_TEXT.ADD} onClick={addingCourseHandler} />
+				)}
 			</StyledHeadingCourses>
-			{newCourse ? (
+			{courseFormVisible ? (
 				<CreateCourse onAdd={creationCoursesHandler} />
 			) : filteredCourses.length ? (
 				filteredCourses.map((course) => (

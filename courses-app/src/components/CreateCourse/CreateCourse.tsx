@@ -12,9 +12,9 @@ import {
 	StyledAuthorChange,
 	StyledAuthorWrapper,
 	StyledDataInnerWrapper,
-	StyledForm,
 	StyledTitleWrapper,
 	StyledInnerWrapper,
+	StyledFormWrapper,
 } from './CreateCourse.style';
 
 const initialFormState: CourseType = {
@@ -51,14 +51,11 @@ const CreateCourse = ({ onAdd }: CreateCourseProps) => {
 		}
 	};
 
-	const isFormValid = () => {
-		return (
-			newCourse.title.trim().length > 0 &&
-			newCourse.description.trim().length > 0 &&
-			newCourse.duration > 0 &&
-			courseAuthors.length > 0
-		);
-	};
+	const isFormValid = () =>
+		newCourse.title.trim().length > 0 &&
+		newCourse.description.trim().length > 0 &&
+		newCourse.duration > 0 &&
+		courseAuthors.length > 0;
 
 	const addProperties = () => {
 		const authorIDs = courseAuthors.map((author) => author.id);
@@ -70,50 +67,48 @@ const CreateCourse = ({ onAdd }: CreateCourseProps) => {
 		return updatedCourse;
 	};
 
-	const formSubmitHandler = (e: React.FormEvent<HTMLFormElement>) => {
-		e.preventDefault();
+	const formSubmitHandler = () => {
 		if (!isFormValid()) {
 			alert('Please, fill in all fields');
 			return;
 		}
 		const addNewCourse = addProperties();
-		console.log(addNewCourse);
 		onAdd(addNewCourse);
 		setNewCourse(initialFormState);
 	};
 
 	const handlerAuthorChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-		if (e.target.value.length < 2) {
-			alert('Too short name');
-			return;
-		}
-		if (allAuthors.some((author) => author.name === e.target.value)) {
-			alert('This author is already been');
-			return;
-		}
 		setNewAuthor(e.target.value);
 	};
 	const authorCreationHandler = () => {
+		if (newAuthor.length < 2) {
+			alert('Too short name');
+			return;
+		}
+		if (allAuthors.some((author) => author.name === newAuthor)) {
+			alert('This author is already been');
+			return;
+		}
 		const newAuthorData: AuthorType = {
 			id: uuid(),
 			name: newAuthor,
 		};
-		setAllAuthors((prev) => [...prev, newAuthorData]);
+		setAllAuthors([...allAuthors, newAuthorData]);
 		mockedAuthorsList.push(newAuthorData);
 		setNewAuthor('');
 	};
 	const authorInsertHandler = (author: AuthorType) => {
-		setCourseAuthors((prev) => [...prev, author]);
-		setAllAuthors((prev) => prev.filter((a) => a.id !== author.id));
+		setCourseAuthors([...courseAuthors, author]);
+		setAllAuthors(allAuthors.filter((a) => a.id !== author.id));
 	};
 	const authorDeleteHandler = (author: AuthorType) => {
 		setCourseAuthors(courseAuthors.filter((a) => a.id !== author.id));
-		setAllAuthors((prev) => [...prev, author]);
+		setAllAuthors([...allAuthors, author]);
 	};
 
 	return (
 		<div>
-			<StyledForm onSubmit={formSubmitHandler}>
+			<StyledFormWrapper>
 				<StyledTitleWrapper>
 					<StyledInnerWrapper>
 						<Input
@@ -124,7 +119,10 @@ const CreateCourse = ({ onAdd }: CreateCourseProps) => {
 							onChange={handlerTitleChange}
 						/>
 					</StyledInnerWrapper>
-					<Button text={BUTTONS_TEXT.CREATE_COURSE} />
+					<Button
+						text={BUTTONS_TEXT.CREATE_COURSE}
+						onClick={formSubmitHandler}
+					/>
 				</StyledTitleWrapper>
 				<label htmlFor='descrInput'>{INPUTS_TEXT.DESCR_PLH}</label>
 				<textarea
@@ -202,7 +200,7 @@ const CreateCourse = ({ onAdd }: CreateCourseProps) => {
 						</StyledDataInnerWrapper>
 					</StyledAuthorBlock>
 				</StyledAuthorWrapper>
-			</StyledForm>
+			</StyledFormWrapper>
 		</div>
 	);
 };
