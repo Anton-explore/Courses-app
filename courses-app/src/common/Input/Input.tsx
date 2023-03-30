@@ -1,17 +1,23 @@
 import { InputProps } from '../../types';
-import { StyledInput } from './Input.style';
+import { StyledInput, StyledInputWrapper } from './Input.style';
 
-export const Input = ({ placeholder, value, onChange }: InputProps) => {
+export const Input = ({
+	placeholder,
+	value,
+	label,
+	htmlFor,
+	onChange,
+}: InputProps) => {
 	return (
-		<>
+		<StyledInputWrapper>
+			{label && <label htmlFor={htmlFor}>{label}</label>}
 			<StyledInput
-				id='courseFilter'
+				id={htmlFor}
 				type='text'
 				placeholder={placeholder}
 				value={value}
 				onChange={onChange}
 			/>
-			<label htmlFor='courseFilter'></label>
-		</>
+		</StyledInputWrapper>
 	);
 };

@@ -1,9 +1,6 @@
-export const formatAuthors = (authorNames: string[]) => {
-	const maxLength = 30;
-	const authorNamesString = authorNames.join(', ');
-	if (authorNamesString.length <= maxLength) {
-		return authorNamesString;
-	} else {
-		return authorNamesString.slice(0, maxLength) + '...';
-	}
+export const formatDate = (date: Date): string => {
+	const day = date.getDate().toString().padStart(2, '0');
+	const month = (date.getMonth() + 1).toString().padStart(2, '0');
+	const year = date.getFullYear().toString();
+	return `${day}/${month}/${year}`;
 };

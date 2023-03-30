@@ -14,7 +14,9 @@ export type AuthorType = {
 
 export type InputProps = {
 	placeholder?: string;
-	value?: string;
+	value?: string | number;
+	label?: string;
+	htmlFor?: string;
 	onChange?: (event: React.ChangeEvent<HTMLInputElement>) => void;
 };
 

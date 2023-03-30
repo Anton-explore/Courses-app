@@ -1,6 +1,12 @@
+import { useState } from 'react';
+import { v4 as uuid } from 'uuid';
+
 import { Button } from '../../common/Button/Button';
 import { Input } from '../../common/Input/Input';
-import { BUTTONS_TEXT, mockedAuthorsList } from '../../constants';
+import { BUTTONS_TEXT, INPUTS_TEXT, mockedAuthorsList } from '../../constants';
+import { formatDate } from '../../helpers/dateGenerator';
+import { formatDuration } from '../../helpers/pipeDuration';
+import { AuthorType, CourseType } from '../../types';
 import {
 	StyledAuthorBlock,
 	StyledAuthorChange,
@@ -11,54 +17,188 @@ import {
 	StyledInnerWrapper,
 } from './CreateCourse.style';
 
-// export const CreateCourse = () => <div>Creation course</div>;
+const initialFormState: CourseType = {
+	id: uuid(),
+	title: '',
+	description: '',
+	duration: 0,
+	creationDate: '',
+	authors: [],
+};
 
-const CreateCourse = () => {
+type CreateCourseProps = {
+	onAdd: (results: CourseType) => void;
+};
+
+const CreateCourse = ({ onAdd }: CreateCourseProps) => {
+	const [newCourse, setNewCourse] = useState<CourseType>(initialFormState);
+	const [allAuthors, setAllAuthors] = useState<AuthorType[]>(mockedAuthorsList);
+	const [courseAuthors, setCourseAuthors] = useState<AuthorType[]>([]);
+	const [newAuthor, setNewAuthor] = useState('');
+
+	const handlerTitleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+		setNewCourse({ ...newCourse, title: e.target.value });
+	};
+	const handlerDescriptionChange = (
+		e: React.ChangeEvent<HTMLTextAreaElement>
+	) => {
+		setNewCourse({ ...newCourse, description: e.target.value });
+	};
+	const handlerDurationChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+		const duration = parseInt(e.target.value);
+		if (!isNaN(duration)) {
+			setNewCourse({ ...newCourse, duration: duration });
+		}
+	};
+
+	const isFormValid = () => {
+		return (
+			newCourse.title.trim().length > 0 &&
+			newCourse.description.trim().length > 0 &&
+			newCourse.duration > 0 &&
+			courseAuthors.length > 0
+		);
+	};
+
+	const addProperties = () => {
+		const authorIDs = courseAuthors.map((author) => author.id);
+		const updatedCourse = {
+			...newCourse,
+			creationDate: formatDate(new Date()),
+			authors: authorIDs,
+		};
+		return updatedCourse;
+	};
+
+	const formSubmitHandler = (e: React.FormEvent<HTMLFormElement>) => {
+		e.preventDefault();
+		if (!isFormValid()) {
+			alert('Please, fill in all fields');
+			return;
+		}
+		const addNewCourse = addProperties();
+		console.log(addNewCourse);
+		onAdd(addNewCourse);
+		setNewCourse(initialFormState);
+	};
+
+	const handlerAuthorChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+		if (e.target.value.length < 2) {
+			alert('Too short name');
+			return;
+		}
+		if (allAuthors.some((author) => author.name === e.target.value)) {
+			alert('This author is already been');
+			return;
+		}
+		setNewAuthor(e.target.value);
+	};
+	const authorCreationHandler = () => {
+		const newAuthorData: AuthorType = {
+			id: uuid(),
+			name: newAuthor,
+		};
+		setAllAuthors((prev) => [...prev, newAuthorData]);
+		mockedAuthorsList.push(newAuthorData);
+		setNewAuthor('');
+	};
+	const authorInsertHandler = (author: AuthorType) => {
+		setCourseAuthors((prev) => [...prev, author]);
+		setAllAuthors((prev) => prev.filter((a) => a.id !== author.id));
+	};
+	const authorDeleteHandler = (author: AuthorType) => {
+		setCourseAuthors(courseAuthors.filter((a) => a.id !== author.id));
+		setAllAuthors((prev) => [...prev, author]);
+	};
+
 	return (
 		<div>
-			<StyledForm action='submit'>
+			<StyledForm onSubmit={formSubmitHandler}>
 				<StyledTitleWrapper>
 					<StyledInnerWrapper>
-						<Input />
+						<Input
+							label={INPUTS_TEXT.TITLE}
+							htmlFor={INPUTS_TEXT.TITLE}
+							placeholder={INPUTS_TEXT.TITLE_PLH}
+							value={newCourse.title}
+							onChange={handlerTitleChange}
+						/>
 					</StyledInnerWrapper>
 					<Button text={BUTTONS_TEXT.CREATE_COURSE} />
 				</StyledTitleWrapper>
-				<textarea name='Description' id='descrInput' cols={30} rows={10}>
-					Enter description
-				</textarea>
+				<label htmlFor='descrInput'>{INPUTS_TEXT.DESCR_PLH}</label>
+				<textarea
+					name='Description'
+					id='descrInput'
+					cols={30}
+					rows={10}
+					placeholder={INPUTS_TEXT.DESCR_PLH}
+					value={newCourse.description}
+					onChange={handlerDescriptionChange}
+				></textarea>
 				<StyledAuthorWrapper>
 					<StyledAuthorBlock>
 						<StyledDataInnerWrapper>
 							<h3>Add author</h3>
-							<Input />
-							<Button text={BUTTONS_TEXT.CREATE_AUTHOR} />
+							<Input
+								label={INPUTS_TEXT.AUTHOR}
+								htmlFor={INPUTS_TEXT.AUTHOR_FOR}
+								placeholder={INPUTS_TEXT.AUTHOR_PLH}
+								value={newAuthor}
+								onChange={handlerAuthorChange}
+							/>
+							<Button
+								text={BUTTONS_TEXT.CREATE_AUTHOR}
+								onClick={authorCreationHandler}
+							/>
 						</StyledDataInnerWrapper>
 						<StyledDataInnerWrapper>
 							<h3>Duration</h3>
-							<Input />
+							<Input
+								label={INPUTS_TEXT.DURATION}
+								htmlFor={INPUTS_TEXT.DURATION}
+								placeholder={INPUTS_TEXT.DURATION_PLH}
+								value={newCourse.duration}
+								onChange={handlerDurationChange}
+							/>
 							<h2>
-								Duration: <strong>00:00</strong> hours
+								Duration:{' '}
+								<span>
+									{newCourse.duration
+										? formatDuration(newCourse.duration)
+										: '00:00'}
+								</span>{' '}
 							</h2>
 						</StyledDataInnerWrapper>
 					</StyledAuthorBlock>
 					<StyledAuthorBlock>
 						<h3>Authors</h3>
 						<StyledDataInnerWrapper>
-							{mockedAuthorsList.map((author) => (
-								<StyledAuthorChange>
+							{allAuthors.map((author) => (
+								<StyledAuthorChange key={author.id}>
 									<p>{author.name}</p>
-									<Button text={BUTTONS_TEXT.ADD_AUTHOR} />
+									<Button
+										text={BUTTONS_TEXT.ADD_AUTHOR}
+										onClick={() => authorInsertHandler(author)}
+									/>
 								</StyledAuthorChange>
 							))}
 						</StyledDataInnerWrapper>
 						<h3>Course authors</h3>
 						<StyledDataInnerWrapper>
-							{mockedAuthorsList.map((author) => (
-								<StyledAuthorChange>
-									<p>{author.name}</p>
-									<Button text={BUTTONS_TEXT.DEL_AUTHOR} />
-								</StyledAuthorChange>
-							))}
+							{courseAuthors.length ? (
+								courseAuthors.map((author) => (
+									<StyledAuthorChange key={author.id}>
+										<p>{author.name}</p>
+										<Button
+											text={BUTTONS_TEXT.DEL_AUTHOR}
+											onClick={() => authorDeleteHandler(author)}
+										/>
+									</StyledAuthorChange>
+								))
+							) : (
+								<p>Author list is empty</p>
+							)}
 						</StyledDataInnerWrapper>
 					</StyledAuthorBlock>
 				</StyledAuthorWrapper>
@@ -68,546 +208,3 @@ const CreateCourse = () => {
 };
 
 export default CreateCourse;
-
-/////////////////////////////////////////////////////////////////
-
-// import React, { useState } from 'react';
-
-// interface Author {
-//   id: number;
-//   name: string;
-// }
-
-// interface Course {
-//   title: string;
-//   description: string;
-//   duration: string;
-//   creationDate: string;
-//   authors: Author[];
-// }
-
-// interface Props {
-//   addNewCourse: (newCourse: Course) => void;
-//   allAuthors: Author[];
-// }
-
-// const CreateCourse: React.FC<Props> = ({ addNewCourse, allAuthors }) => {
-//   const [title, setTitle] = useState('');
-//   const [description, setDescription] = useState('');
-//   const [duration, setDuration] = useState('');
-//   const [selectedAuthors, setSelectedAuthors] = useState<Author[]>([]);
-//   const [courseAuthors, setCourseAuthors] = useState<Author[]>([]);
-//   const [authorName, setAuthorName] = useState('');
-
-//   const handleTitleChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-//     setTitle(event.target.value);
-//   };
-
-//   const handleDescriptionChange = (event: React.ChangeEvent<HTMLTextAreaElement>) => {
-//     setDescription(event.target.value);
-//   };
-
-//   const handleDurationChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-//     const value = event.target.value;
-//     if (/^\d*$/.test(value)) { // allow only numbers
-//       setDuration(value);
-//     }
-//   };
-
-//   const handleAuthorNameChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-//     setAuthorName(event.target.value);
-//   };
-
-//   const handleAddAuthorClick = (author: Author) => {
-//     setSelectedAuthors(selectedAuthors.filter(a => a.id !== author.id));
-//     setCourseAuthors([...courseAuthors, author]);
-//   };
-
-//   const handleDeleteAuthorClick = (author: Author) => {
-//     setCourseAuthors(courseAuthors.filter(a => a.id !== author.id));
-//     setSelectedAuthors([...selectedAuthors, author]);
-//   };
-
-//   const handleCreateAuthorClick = () => {
-//     if (authorName.length >= 2) {
-//       const newAuthor: Author = {
-//         id: allAuthors.length + 1,
-//         name: authorName,
-//       };
-//       setAuthorName('');
-//       allAuthors.push(newAuthor); // assuming mockedAuthorsList is mutable
-//       setSelectedAuthors([...selectedAuthors, newAuthor]);
-//     }
-//   };
-
-//   const handleCreateCourseClick = () => {
-//     if (title && description && duration && courseAuthors.length > 0) {
-//       const newCourse: Course = {
-//         title,
-//         description,
-//         duration: formatDuration(parseInt(duration)),
-//         creationDate: new Date().toLocaleDateString(),
-//         authors: courseAuthors,
-//       };
-//       addNewCourse(newCourse);
-//     } else {
-//       alert('ALL FIELDS ARE REQUIRED');
-//     }
-//   };
-
-//   const formatDuration = (minutes: number) => {
-//     const hours = Math.floor(minutes / 60);
-//     const remainingMinutes = minutes % 60;
-//     return `${hours}:${remainingMinutes.toString().padStart(2, '0')} hours`;
-//   };
-
-//   return (
-//     <div>
-//       <h2>Create New Course</h2>
-//       <div>
-//         <label htmlFor="title">Title:</label>
-//         <input id="title" type="text" value={title} onChange={handleTitleChange} />
-//       </div>
-//       <div>
-//         <label htmlFor="description">Description:</label>
-//         <textarea id="description" value={description} onChange={handleDescriptionChange} />
-//       </div>
-//       <div>
-//         <label htmlFor="authors">Authors:</label>
-//         <ul>
-//           {selectedAuthors.map(author => (
-//             <li key
-
-////////////////////////////////////////////////////////////////////
-
-// import React, { useState } from "react";
-// import { v4 as uuid } from "uuid";
-
-// import { Course, Author } from "./models";
-
-// interface Props {
-//   authors: Author[];
-//   onCreateCourse: (course: Course) => void;
-//   onCancel: () => void;
-// }
-
-// const CreateCourse: React.FC<Props> = ({ authors, onCreateCourse, onCancel }) => {
-//   const [title, setTitle] = useState("");
-//   const [description, setDescription] = useState("");
-//   const [duration, setDuration] = useState<number | undefined>(undefined);
-//   const [selectedAuthors, setSelectedAuthors] = useState<Author[]>([]);
-//   const [courseAuthors, setCourseAuthors] = useState<Author[]>([]);
-
-//   const handleAddAuthor = (author: Author) => {
-//     setSelectedAuthors((prevSelected) => prevSelected.filter((a) => a.id !== author.id));
-//     setCourseAuthors((prevAuthors) => [...prevAuthors, author]);
-//   };
-
-//   const handleRemoveAuthor = (author: Author) => {
-//     setCourseAuthors((prevAuthors) => prevAuthors.filter((a) => a.id !== author.id));
-//     setSelectedAuthors((prevSelected) => [...prevSelected, author]);
-//   };
-
-//   const handleCreateAuthor = () => {
-//     if (newAuthorName.length < 2) {
-//       alert("Author name should be at least 2 characters long");
-//       return;
-//     }
-
-//     const newAuthor: Author = {
-//       id: uuid(),
-//       name: newAuthorName,
-//     };
-
-//     setSelectedAuthors((prevSelected) => [...prevSelected, newAuthor]);
-
-//     setNewAuthorName("");
-//   };
-
-//   const handleSubmit = () => {
-//     if (!title || !description || !duration || courseAuthors.length === 0) {
-//       alert("ALL FIELDS ARE REQUIRED");
-//       return;
-//     }
-
-//     const newCourse: Course = {
-//       id: uuid(),
-//       title,
-//       description,
-//       duration: `${Math.floor(duration / 60)}:${duration % 60} hours`,
-//       creationDate: new Date().toISOString(),
-//       authors: courseAuthors.map((author) => author.id),
-//     };
-
-//     onCreateCourse(newCourse);
-//   };
-
-//   const [newAuthorName, setNewAuthorName] = useState("");
-
-//   return (
-//     <div>
-//       <h1>Create Course</h1>
-//       <div>
-//         <label htmlFor="title-input">Title:</label>
-//         <input
-//           id="title-input"
-//           type="text"
-//           value={title}
-//           onChange={(e) => setTitle(e.target.value)}
-//         />
-//       </div>
-//       <div>
-//         <label htmlFor="description-textarea">Description:</label>
-//         <textarea
-//           id="description-textarea"
-//           value={description}
-//           onChange={(e) => setDescription(e.target.value)}
-//         />
-//       </div>
-//       <div>
-//         <label htmlFor="duration-input">Duration:</label>
-//         <input
-//           id="duration-input"
-//           type="number"
-//           min={1}
-//           value={duration}
-//           onChange={(e) => setDuration(Number
-
-//////////////////////////////////////////////////////////////
-
-// import React, { useState } from "react";
-// import { mockedAuthorsList } from "./mockedData";
-
-// interface Author {
-//   id: number;
-//   name: string;
-// }
-
-// interface Course {
-//   id: number;
-//   title: string;
-//   duration: string;
-//   creationDate: string;
-//   description: string;
-//   authors: Author[];
-// }
-
-// const CreateCourse: React.FC<{
-//   onCreate: (course: Course) => void;
-//   onCancel: () => void;
-// }> = ({ onCreate, onCancel }) => {
-//   const [title, setTitle] = useState("");
-//   const [duration, setDuration] = useState(0);
-//   const [description, setDescription] = useState("");
-//   const [authors, setAuthors] = useState<Author[]>([]);
-//   const [allAuthors, setAllAuthors] = useState(mockedAuthorsList);
-//   const [newAuthor, setNewAuthor] = useState("");
-
-//   const handleAddAuthor = (author: Author) => {
-//     setAuthors((prev) => [...prev, author]);
-//     setAllAuthors((prev) => prev.filter((a) => a.id !== author.id));
-//   };
-
-//   const handleDeleteAuthor = (author: Author) => {
-//     setAuthors((prev) => prev.filter((a) => a.id !== author.id));
-//     setAllAuthors((prev) => [...prev, author]);
-//   };
-
-//   const handleCreateAuthor = () => {
-//     if (newAuthor.length >= 2) {
-//       const newId = allAuthors.length + 1;
-//       const newAuthorObj: Author = {
-//         id: newId,
-//         name: newAuthor,
-//       };
-//       setAllAuthors((prev) => [...prev, newAuthorObj]);
-//       setNewAuthor("");
-//     }
-//   };
-
-//   const handleCreateCourse = () => {
-//     if (!title || !duration || !description || authors.length === 0) {
-//       alert("ALL FIELDS ARE REQUIRED");
-//       return;
-//     }
-
-//     const newCourseId = Math.max(...mockedCoursesList.map((c) => c.id)) + 1;
-
-//     const newCourseObj: Course = {
-//       id: newCourseId,
-//       title,
-//       duration: `${Math.floor(duration / 60)}:${duration % 60} hours`,
-//       creationDate: new Date().toISOString(),
-//       description,
-//       authors,
-//     };
-
-//     onCreate(newCourseObj);
-//   };
-
-//   return (
-//     <div>
-//       <h2>Create Course</h2>
-//       <label>
-//         Title:
-//         <input
-//           type="text"
-//           value={title}
-//           onChange={(e) => setTitle(e.target.value)}
-//         />
-//       </label>
-//       <br />
-//       <label>
-//         Duration (in minutes):
-//         <input
-//           type="number"
-//           value={duration}
-//           onChange={(e) => setDuration(parseInt(e.target.value))}
-//         />
-//       </label>
-//       <br />
-//       <label>
-//         Description:
-//         <textarea
-//           value={description}
-//           onChange={(e) => setDescription(e.target.value)}
-//         />
-//       </label>
-//       <br />
-//       <label>
-//         Authors:
-//         <ul>
-//           {allAuthors.map((author) => (
-//             <li key={author.id}>
-//               {author.name}
-//               <button onClick={() => handleAddAuthor(author)}>
-//                 Add author
-//               </button>
-//             </li>
-//           ))}
-//         </ul>
-//       </label>
-//       <br />
-//       <label>
-//         Course authors:
-//         <ul>
-//           {authors.map((author) => (
-//             <li key={author.id}>
-//               {author.name}
-//               <button onClick={() => handleDeleteAuthor(author)}>
-//                 Delete author
-
-////////////////////////////////////////////////////////////////////////
-
-// import React, { useState } from "react";
-// import { mockedAuthorsList } from "./mockedData";
-
-// interface Author {
-//   id: number;
-//   name: string;
-// }
-
-// interface Course {
-//   id: number;
-//   title: string;
-//   duration: string;
-//   creationDate: string;
-//   description: string;
-//   authors: Author[];
-// }
-
-// const CreateCourse: React.FC<{
-//   onCreate: (course: Course) => void;
-//   onCancel: () => void;
-// }> = ({ onCreate, onCancel }) => {
-//   const [title, setTitle] = useState("");
-//   const [duration, setDuration] = useState(0);
-//   const [description, setDescription] = useState("");
-//   const [authors, setAuthors] = useState<Author[]>([]);
-//   const [allAuthors, setAllAuthors] = useState(mockedAuthorsList);
-//   const [newAuthor, setNewAuthor] = useState("");
-
-//   const handleAddAuthor = (author: Author) => {
-//     setAuthors((prev) => [...prev, author]);
-//     setAllAuthors((prev) => prev.filter((a) => a.id !== author.id));
-//   };
-
-//   const handleDeleteAuthor = (author: Author) => {
-//     setAuthors((prev) => prev.filter((a) => a.id !== author.id));
-//     setAllAuthors((prev) => [...prev, author]);
-//   };
-
-//   const handleCreateAuthor = () => {
-//     if (newAuthor.length >= 2) {
-//       const newId = allAuthors.length + 1;
-//       const newAuthorObj: Author = {
-//         id: newId,
-//         name: newAuthor,
-//       };
-//       setAllAuthors((prev) => [...prev, newAuthorObj]);
-//       setNewAuthor("");
-//     }
-//   };
-
-//   const handleCreateCourse = () => {
-//     if (!title || !duration || !description || authors.length === 0) {
-//       alert("ALL FIELDS ARE REQUIRED");
-//       return;
-//     }
-
-//     const newCourseId = Math.max(...mockedCoursesList.map((c) => c.id)) + 1;
-
-//     const newCourseObj: Course = {
-//       id: newCourseId,
-//       title,
-//       duration: `${Math.floor(duration / 60)}:${duration % 60} hours`,
-//       creationDate: new Date().toISOString(),
-//       description,
-//       authors,
-//     };
-
-//     onCreate(newCourseObj);
-//   };
-
-//   return (
-//     <div>
-//       <h2>Create Course</h2>
-//       <label>
-//         Title:
-//         <input
-//           type="text"
-//           value={title}
-//           onChange={(e) => setTitle(e.target.value)}
-//         />
-//       </label>
-//       <br />
-//       <label>
-//         Duration (in minutes):
-//         <input
-//           type="number"
-//           value={duration}
-//           onChange={(e) => setDuration(parseInt(e.target.value))}
-//         />
-//       </label>
-//       <br />
-//       <label>
-//         Description:
-//         <textarea
-//           value={description}
-//           onChange={(e) => setDescription(e.target.value)}
-//         />
-//       </label>
-//       <br />
-//       <label>
-//         Authors:
-//         <ul>
-//           {allAuthors.map((author) => (
-//             <li key={author.id}>
-//               {author.name}
-//               <button onClick={() => handleAddAuthor(author)}>
-//                 Add author
-//               </button>
-//             </li>
-//           ))}
-//         </ul>
-//       </label>
-//       <br />
-//       <label>
-//         Course authors:
-//         <ul>
-//           {authors.map((author) => (
-//             <li key={author.id}>
-//               {author.name}
-//               <button onClick={() => handleDeleteAuthor(author)}>
-//                 Delete author
-
-//////////////////////////////////////////////////////////////////
-
-// import React, { useState } from 'react';
-// import { Author, mockedAuthorsList } from './data';
-
-// interface CreateCourseProps {
-//   onCourseCreate: (title: string, description: string, authors: Author[], duration: number) => void;
-//   onCancel: () => void;
-// }
-
-// const CreateCourse: React.FC<CreateCourseProps> = ({ onCourseCreate, onCancel }) => {
-//   const [title, setTitle] = useState('');
-//   const [description, setDescription] = useState('');
-//   const [duration, setDuration] = useState(0);
-//   const [selectedAuthors, setSelectedAuthors] = useState<Author[]>([]);
-//   const [courseAuthors, setCourseAuthors] = useState<Author[]>([]);
-
-//   const handleTitleChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-//     setTitle(event.target.value);
-//   };
-
-//   const handleDescriptionChange = (event: React.ChangeEvent<HTMLTextAreaElement>) => {
-//     setDescription(event.target.value);
-//   };
-
-//   const handleDurationChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-//     const value = parseInt(event.target.value);
-//     if (!isNaN(value)) {
-//       setDuration(value);
-//     }
-//   };
-
-//   const handleAddAuthor = (author: Author) => {
-//     setSelectedAuthors((prevSelectedAuthors) => prevSelectedAuthors.filter((a) => a.id !== author.id));
-//     setCourseAuthors((prevCourseAuthors) => [...prevCourseAuthors, author]);
-//   };
-
-//   const handleDeleteAuthor = (author: Author) => {
-//     setCourseAuthors((prevCourseAuthors) => prevCourseAuthors.filter((a) => a.id !== author.id));
-//     setSelectedAuthors((prevSelectedAuthors) => [...prevSelectedAuthors, author]);
-//   };
-
-//   const handleCreateAuthor = () => {
-//     const authorName = authorNameInputRef.current?.value;
-//     if (authorName && authorName.length >= 2) {
-//       const newAuthor: Author = {
-//         id: Math.max(...mockedAuthorsList.map((a) => a.id)) + 1,
-//         name: authorName,
-//       };
-//       setSelectedAuthors((prevSelectedAuthors) => [...prevSelectedAuthors, newAuthor]);
-//       mockedAuthorsList.push(newAuthor);
-//       authorNameInputRef.current!.value = '';
-//     }
-//   };
-
-//   const handleCreateCourse = () => {
-//     if (title && description && selectedAuthors.length === 0 && duration > 0) {
-//       onCourseCreate(title, description, courseAuthors, duration);
-//     } else {
-//       alert('ALL FIELDS ARE REQUIRED');
-//     }
-//   };
-
-//   const authorNameInputRef = React.createRef<HTMLInputElement>();
-
-//   return (
-//     <div>
-//       <h2>Create New Course</h2>
-//       <div>
-//         <label htmlFor="title-input">Title:</label>
-//         <input id="title-input" type="text" value={title} onChange={handleTitleChange} />
-//       </div>
-//       <div>
-//         <label htmlFor="description-input">Description:</label>
-//         <textarea id="description-input" value={description} onChange={handleDescriptionChange} />
-//       </div>
-//       <div>
-//         <label htmlFor="duration-input">Duration (minutes):</label>
-//         <input id="duration-input" type="number" value={duration} onChange={handleDurationChange} />
-//       </div>
-//       <div>
-//         <label>Authors:</label>
-//         <ul>
-//           {selectedAuthors.map((author) => (
-//             <li key={author.id}>
-//               {author.name}
-//               <button onClick={() => handleAddAuthor(author)}>Add author</button>
-//             </li>
-//           ))}
-//         </ul>

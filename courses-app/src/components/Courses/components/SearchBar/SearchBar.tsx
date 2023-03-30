@@ -10,6 +10,9 @@ const SearchBar: React.FC<SearchBarProps> = ({ courses, onSearch }) => {
 
 	const handleInputChange = (event: React.ChangeEvent<HTMLInputElement>) => {
 		setSearchTerm(event.target.value);
+		if (event.target.value === '') {
+			onSearch(courses);
+		}
 	};
 
 	const handleSearchClick = () => {
@@ -29,7 +32,7 @@ const SearchBar: React.FC<SearchBarProps> = ({ courses, onSearch }) => {
 	};
 
 	return (
-		<SearchBarWrapper action='submit'>
+		<SearchBarWrapper onSubmit={(e) => e.preventDefault()}>
 			<Input
 				placeholder={INPUTS_TEXT.SRCH}
 				value={searchTerm}

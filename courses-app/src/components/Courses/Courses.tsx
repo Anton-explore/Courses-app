@@ -23,23 +23,31 @@ const Courses = () => {
 		setFilteredCourses(courses);
 	};
 
+	const creationCoursesHandler = (course: CourseType) => {
+		setCourses((prev) => [...prev, course]);
+		mockedCoursesList.push(course);
+		setNewCourse((prev) => !prev);
+	};
+
 	return (
 		<StyledCourses>
 			<StyledHeadingCourses>
-				{!newCourse ? (
+				{!newCourse && (
 					<SearchBar courses={courses} onSearch={filteringCoursesHandler} />
-				) : null}
+				)}
 				<Button
 					text={!newCourse ? BUTTONS_TEXT.ADD : BUTTONS_TEXT.SHOWALL}
 					onClick={addingCourseHandler}
 				/>
 			</StyledHeadingCourses>
 			{newCourse ? (
-				<CreateCourse />
-			) : (
+				<CreateCourse onAdd={creationCoursesHandler} />
+			) : filteredCourses.length ? (
 				filteredCourses.map((course) => (
 					<CourseCard key={course.id} {...course} />
 				))
+			) : (
+				<p>Sorry, i can't find anything</p>
 			)}
 		</StyledCourses>
 	);

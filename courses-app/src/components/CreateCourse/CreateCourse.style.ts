@@ -20,6 +20,7 @@ export const StyledAuthorWrapper = styled.div`
 	padding: 40px 20px;
 	display: flex;
 	gap: 40px;
+	border: 2px solid black;
 `;
 
 export const StyledAuthorChange = styled.div`

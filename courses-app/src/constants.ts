@@ -60,4 +60,13 @@ export const BUTTONS_TEXT = {
 
 export const INPUTS_TEXT = {
 	SRCH: 'Enter course name...',
+	TITLE: 'Title',
+	TITLE_PLH: 'Enter title',
+	DESCR: 'Description',
+	DESCR_PLH: 'Enter description',
+	AUTHOR: 'Author name',
+	AUTHOR_FOR: 'AuthorName',
+	AUTHOR_PLH: 'Enter author name...',
+	DURATION: 'Duration',
+	DURATION_PLH: 'Enter duration in minutes...',
 };
