@@ -18,7 +18,7 @@ import {
 } from './CreateCourse.style';
 
 const initialFormState: CourseType = {
-	id: uuid(),
+	id: '',
 	title: '',
 	description: '',
 	duration: 0,
@@ -57,6 +57,7 @@ const CreateCourse: React.FC<CreateCourseProps> = ({ onAdd, authors }) => {
 		const authorIDs = courseAuthors.map((author) => author.id);
 		const updatedCourse = {
 			...newCourse,
+			id: uuid(),
 			creationDate: formatDate(new Date()),
 			authors: authorIDs,
 		};
@@ -71,6 +72,7 @@ const CreateCourse: React.FC<CreateCourseProps> = ({ onAdd, authors }) => {
 		const addNewCourse = addProperties();
 		onAdd(addNewCourse, courseAuthors);
 		setNewCourse(initialFormState);
+		setAllAuthors(authors);
 	};
 
 	const handlerAuthorChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -167,7 +169,7 @@ const CreateCourse: React.FC<CreateCourseProps> = ({ onAdd, authors }) => {
 					<StyledAuthorBlock>
 						<h3>Authors</h3>
 						<StyledDataInnerWrapper>
-							{allAuthors.map((author) => (
+							{allAuthors.map((author, index) => (
 								<StyledAuthorChange key={author.id}>
 									<p>{author.name}</p>
 									<Button

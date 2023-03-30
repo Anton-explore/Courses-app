@@ -34,7 +34,12 @@ const Courses = () => {
 	) => {
 		setCourses([...courses, course]);
 		setFilteredCourses([...courses, course]);
-		setAuthors([...authors, ...courseAuthors]);
+		setAuthors([
+			...authors,
+			...courseAuthors.filter(
+				(atr) => !authors.some((haveAuthor) => haveAuthor.id === atr.id)
+			),
+		]);
 		setCourseFormVisible(!courseFormVisible);
 	};
 
