@@ -15,8 +15,11 @@ export type AuthorType = {
 export type InputProps = {
 	placeholder?: string;
 	value?: string | number;
+	name?: string;
 	label?: string;
+	type?: string;
 	htmlFor?: string;
+	error?: string | false;
 	onChange?: (event: React.ChangeEvent<HTMLInputElement>) => void;
 };
 
@@ -39,3 +42,9 @@ export type CreateCourseProps = {
 	authors: AuthorType[];
 	onAdd: (course: CourseType, authors: AuthorType[]) => void;
 };
+
+export interface LoginValues {
+	name?: string;
+	email: string;
+	password: string;
+}
