@@ -9,7 +9,6 @@ export const Input = ({
 	name,
 	htmlFor,
 	onChange,
-	error,
 }: InputProps) => {
 	return (
 		<StyledInputWrapper>
@@ -22,7 +21,6 @@ export const Input = ({
 				value={value}
 				onChange={onChange}
 			/>
-			{error && <div>{error}</div>}
 		</StyledInputWrapper>
 	);
 };

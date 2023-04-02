@@ -1,4 +1,5 @@
 import { FC, useMemo } from 'react';
+import { useNavigate } from 'react-router-dom';
 
 import { CourseCardType } from '../../../../types';
 import { BUTTONS_TEXT } from '../../../../constants';
@@ -16,6 +17,8 @@ import {
 
 const CourseCard: FC<CourseCardType> = ({ course, allAuthors }) => {
 	const { id, title, duration, creationDate, description, authors } = course;
+
+	const navigate = useNavigate();
 
 	const filteredAuthors = useMemo(() => {
 		return authors.map((authorId) => {
@@ -42,7 +45,10 @@ const CourseCard: FC<CourseCardType> = ({ course, allAuthors }) => {
 						<strong>Created:</strong> {creationDate}
 					</p>
 				</StyledInnerWrapper>
-				<Button text={BUTTONS_TEXT.SHOW} />
+				<Button
+					text={BUTTONS_TEXT.SHOW}
+					onClick={() => navigate(`/courses/${id}`)}
+				/>
 			</StyledDataWrapper>
 		</StyledCardWrapper>
 	);

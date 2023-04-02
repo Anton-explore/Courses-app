@@ -1,5 +1,6 @@
 import { Button } from '../../common/Button/Button';
-import { BUTTONS_TEXT, USER_NAME } from '../../constants';
+import { BUTTONS_TEXT } from '../../constants';
+import { useSharedState } from '../../hooks/useSharedState';
 import { Logo } from './components/Logo/Logo';
 import {
 	StyledHeaderWrapper,
@@ -7,19 +8,20 @@ import {
 	StyledUserInfoWrapper,
 } from './Header.style';
 
-const Header = () => {
+const Header: React.FC = () => {
+	const { userName, handleLogout } = useSharedState();
+
 	return (
 		<StyledHeaderWrapper>
 			<StyledLogoWrapper>
 				<Logo />
 			</StyledLogoWrapper>
-			<StyledUserInfoWrapper>
-				<p>{USER_NAME}</p>
-				<Button
-					text={BUTTONS_TEXT.OUT}
-					onClick={() => console.log('You tapped me!')}
-				/>
-			</StyledUserInfoWrapper>
+			{userName && (
+				<StyledUserInfoWrapper>
+					<p>{userName}</p>
+					<Button text={BUTTONS_TEXT.OUT} onClick={handleLogout} />
+				</StyledUserInfoWrapper>
+			)}
 		</StyledHeaderWrapper>
 	);
 };

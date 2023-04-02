@@ -48,6 +48,7 @@ export const BUTTONS_TEXT = {
 	ADD: 'Add new course',
 	OUT: 'Logout',
 	IN: 'Login',
+	REG: 'Registration',
 	SRCH: 'Search',
 	SHOW: 'Show course',
 	SHOWALL: 'Show course list',
@@ -69,4 +70,10 @@ export const INPUTS_TEXT = {
 	AUTHOR_PLH: 'Enter author name...',
 	DURATION: 'Duration',
 	DURATION_PLH: 'Enter duration in minutes...',
+	NAME: 'Name',
+	NAME_PLH: 'Enter name',
+	EML: 'Email',
+	EML_PLH: 'Enter email',
+	PASS: 'Password',
+	PASS_PLH: 'Enter password',
 };

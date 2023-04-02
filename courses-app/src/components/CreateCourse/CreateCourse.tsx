@@ -73,6 +73,7 @@ const CreateCourse: React.FC<CreateCourseProps> = ({ onAdd, authors }) => {
 		onAdd(addNewCourse, courseAuthors);
 		setNewCourse(initialFormState);
 		setAllAuthors(authors);
+		// navigate('/courses');
 	};
 
 	const handlerAuthorChange = (e: React.ChangeEvent<HTMLInputElement>) => {

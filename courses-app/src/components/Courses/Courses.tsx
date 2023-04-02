@@ -1,63 +1,43 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
+import { useNavigate } from 'react-router-dom';
 
-import {
-	BUTTONS_TEXT,
-	mockedAuthorsList,
-	mockedCoursesList,
-} from '../../constants';
-
+import { BUTTONS_TEXT } from '../../constants';
 import { Button } from '../../common/Button/Button';
-import CreateCourse from '../CreateCourse/CreateCourse';
 import CourseCard from './components/CourseCard/CourseCard';
 import SearchBar from './components/SearchBar/SearchBar';
 
 import { StyledCourses, StyledHeadingCourses } from './Courses.style';
-import { AuthorType, CourseType } from '../../types';
+import { CourseType } from '../../types';
+import { useSharedState } from '../../hooks/useSharedState';
 
 const Courses = () => {
-	const [courseFormVisible, setCourseFormVisible] = useState(false);
-	const [courses, setCourses] = useState(mockedCoursesList);
+	const { courses, allAuthors } = useSharedState();
+
 	const [filteredCourses, setFilteredCourses] = useState(courses);
-	const [authors, setAuthors] = useState(mockedAuthorsList);
+
+	const navigate = useNavigate();
 
 	const addingCourseHandler = () => {
-		setCourseFormVisible(!courseFormVisible);
+		navigate('/courses/add');
 	};
+
+	useEffect(() => {
+		setFilteredCourses(courses);
+	}, [courses]);
 
 	const filteringCoursesHandler = (courses: CourseType[]) => {
 		setFilteredCourses(courses);
 	};
 
-	const creationCoursesHandler = (
-		course: CourseType,
-		courseAuthors: AuthorType[]
-	) => {
-		setCourses([...courses, course]);
-		setFilteredCourses([...courses, course]);
-		setAuthors([
-			...authors,
-			...courseAuthors.filter(
-				(atr) => !authors.some((haveAuthor) => haveAuthor.id === atr.id)
-			),
-		]);
-		setCourseFormVisible(!courseFormVisible);
-	};
-
 	return (
 		<StyledCourses>
 			<StyledHeadingCourses>
-				{!courseFormVisible && (
-					<SearchBar courses={courses} onSearch={filteringCoursesHandler} />
-				)}
-				{!courseFormVisible && (
-					<Button text={BUTTONS_TEXT.ADD} onClick={addingCourseHandler} />
-				)}
+				<SearchBar courses={courses} onSearch={filteringCoursesHandler} />
+				<Button text={BUTTONS_TEXT.ADD} onClick={addingCourseHandler} />
 			</StyledHeadingCourses>
-			{courseFormVisible ? (
-				<CreateCourse onAdd={creationCoursesHandler} authors={authors} />
-			) : filteredCourses.length ? (
+			{filteredCourses.length ? (
 				filteredCourses.map((course) => (
-					<CourseCard key={course.id} course={course} allAuthors={authors} />
+					<CourseCard key={course.id} course={course} allAuthors={allAuthors} />
 				))
 			) : (
 				<p>Sorry, i can't find anything</p>
