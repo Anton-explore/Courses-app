@@ -1,17 +1,22 @@
-import React from 'react';
+import { useState } from 'react';
 import { useFormik } from 'formik';
 import { useNavigate, Link } from 'react-router-dom';
+
 import { Input } from '../../common/Input/Input';
 import { Button } from '../../common/Button/Button';
+
 import { BUTTONS_TEXT, INPUTS_TEXT } from '../../constants';
-import { LoginValues, TokenResponse } from '../../types';
+import { LoginValues } from '../../types';
 import { validateLogin } from '../../helpers/loginFormValidation';
 import { UserAPI } from '../../helpers/api';
+
 import { StyledForm } from './Login.style';
 
-const Login: React.FC<{ handleLogin: (response: TokenResponse) => void }> = ({
-	handleLogin,
-}) => {
+import { useSharedState } from '../../hooks/useSharedState';
+
+const Login: React.FC = () => {
+	const { handleLogin } = useSharedState();
+	const [loginError, setLoginError] = useState<string | null>(null);
 	const navigate = useNavigate();
 
 	const initialValues: LoginValues = {
@@ -22,14 +27,14 @@ const Login: React.FC<{ handleLogin: (response: TokenResponse) => void }> = ({
 	const onSubmit = async (formData: LoginValues) => {
 		try {
 			const response = await UserAPI.login(formData);
-			console.log(response);
 			const { result, user } = response;
 			handleLogin({ result, user });
 			navigate('/courses');
 			return response;
 		} catch (error: any) {
 			console.log(error.message);
-			return error.message;
+			setLoginError(`You need register first: ${error.message}`);
+			return;
 		}
 	};
 
@@ -64,6 +69,7 @@ const Login: React.FC<{ handleLogin: (response: TokenResponse) => void }> = ({
 			{formik.touched.password && formik.errors.password ? (
 				<div>{formik.errors.password}</div>
 			) : null}
+			{loginError && <div>{loginError}</div>}
 			<Button text={BUTTONS_TEXT.IN} />
 			<p>
 				If you don't have an account you can{' '}

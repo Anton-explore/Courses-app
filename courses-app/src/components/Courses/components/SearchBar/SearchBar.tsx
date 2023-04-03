@@ -1,11 +1,18 @@
 import { useState } from 'react';
+
 import { Button } from '../../../../common/Button/Button';
 import { Input } from '../../../../common/Input/Input';
+
 import { BUTTONS_TEXT, INPUTS_TEXT } from '../../../../constants';
 import { SearchBarProps } from '../../../../types';
+
+import { useSharedState } from '../../../../hooks/useSharedState';
+
 import { SearchBarWrapper } from './SearchBar.style';
 
-const SearchBar: React.FC<SearchBarProps> = ({ courses, onSearch }) => {
+const SearchBar: React.FC<SearchBarProps> = ({ onSearch }) => {
+	const { courses } = useSharedState();
+
 	const [searchTerm, setSearchTerm] = useState('');
 
 	const handleInputChange = (event: React.ChangeEvent<HTMLInputElement>) => {

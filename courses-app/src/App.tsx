@@ -79,6 +79,8 @@ function App() {
 				setCourses,
 				allAuthors,
 				setAllAuthors,
+				creationCoursesHandler,
+				handleLogin,
 			}}
 		>
 			<StyledWrapper>
@@ -103,8 +105,8 @@ function App() {
 						element={
 							token ? (
 								<CreateCourse
-									onAdd={creationCoursesHandler}
-									authors={allAuthors}
+								// onAdd={creationCoursesHandler}
+								// authors={allAuthors}
 								/>
 							) : (
 								<Navigate to='/login' replace />
@@ -116,12 +118,7 @@ function App() {
 						element={token ? <CourseInfo /> : <Navigate to='/login' replace />}
 					/>
 					{!token && <Route path='/registration' element={<Registration />} />}
-					{!token && (
-						<Route
-							path='/login'
-							element={<Login handleLogin={handleLogin} />}
-						/>
-					)}
+					{!token && <Route path='/login' element={<Login />} />}
 					{token && (
 						<Route path='/login' element={<Navigate to='/courses' replace />} />
 					)}

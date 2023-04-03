@@ -8,7 +8,7 @@ import {
 	StyledTitle,
 } from './NotFound.styles';
 
-const NotFound = () => {
+const NotFound: React.FC = () => {
 	const navigate = useNavigate();
 
 	const onClickBackHandler = () => {

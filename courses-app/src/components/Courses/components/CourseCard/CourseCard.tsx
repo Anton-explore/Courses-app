@@ -5,6 +5,7 @@ import { CourseCardType } from '../../../../types';
 import { BUTTONS_TEXT } from '../../../../constants';
 import { formatDuration } from '../../../../helpers/pipeDuration';
 import { formatAuthors } from '../../../../helpers/authorFormatHelper';
+import { useSharedState } from '../../../../hooks/useSharedState';
 
 import { Button } from '../../../../common/Button/Button';
 
@@ -15,7 +16,8 @@ import {
 	StyledTextWrapper,
 } from './CourseCard.style';
 
-const CourseCard: FC<CourseCardType> = ({ course, allAuthors }) => {
+const CourseCard: FC<CourseCardType> = ({ course }) => {
+	const { allAuthors } = useSharedState();
 	const { id, title, duration, creationDate, description, authors } = course;
 
 	const navigate = useNavigate();

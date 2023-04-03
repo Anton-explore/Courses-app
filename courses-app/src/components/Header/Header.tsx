@@ -1,7 +1,10 @@
 import { Button } from '../../common/Button/Button';
+
 import { BUTTONS_TEXT } from '../../constants';
 import { useSharedState } from '../../hooks/useSharedState';
+
 import { Logo } from './components/Logo/Logo';
+
 import {
 	StyledHeaderWrapper,
 	StyledLogoWrapper,

@@ -29,13 +29,11 @@ export type ButtonProps = {
 };
 
 export type SearchBarProps = {
-	courses: CourseType[];
 	onSearch: (results: CourseType[]) => void;
 };
 
 export type CourseCardType = {
 	course: CourseType;
-	allAuthors: AuthorType[];
 };
 
 export type CreateCourseProps = {
@@ -61,6 +59,11 @@ export interface GlobalSharedContext {
 	setCourses: React.Dispatch<React.SetStateAction<CourseType[]>>;
 	allAuthors: AuthorType[];
 	setAllAuthors: React.Dispatch<React.SetStateAction<AuthorType[]>>;
+	creationCoursesHandler: (
+		course: CourseType,
+		courseAuthors: AuthorType[]
+	) => void;
+	handleLogin: (response: TokenResponse) => void;
 }
 
 export type TokenResponse = {
