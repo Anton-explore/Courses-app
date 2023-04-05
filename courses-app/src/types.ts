@@ -64,9 +64,7 @@ export interface GlobalSharedContext {
 	isLoading: boolean;
 	setIsLoading: React.Dispatch<React.SetStateAction<boolean>>;
 	courses: CourseType[];
-	// setCourses: React.Dispatch<React.SetStateAction<CourseType[]>>;
 	allAuthors: AuthorType[];
-	// setAllAuthors: React.Dispatch<React.SetStateAction<AuthorType[]>>;
 	creationCoursesHandler: (
 		course: CourseType,
 		courseAuthors: AuthorType[]

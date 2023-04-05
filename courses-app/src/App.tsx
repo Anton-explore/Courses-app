@@ -39,19 +39,11 @@ export const SharedContext = createContext<GlobalSharedContext | undefined>(
 function App() {
 	const dispatch = useAppDispatch();
 
-	// const [token, setToken] = useState<string | null>(
-	// 	localStorage.getItem('token')
-	// );
-	// const [userName, setUserName] = useState<string | null>(
-	// 	localStorage.getItem('userName')
-	// );
 	const token = useAppSelector(selectToken);
 	const userName = useAppSelector(selectUserName);
 	const courses = useAppSelector(selectCourses);
 	const allAuthors = useAppSelector(selectAuthors);
 	const [isLoading, setIsLoading] = useState<boolean>(false);
-	// const [courses, setCourses] = useState<CourseType[]>(mockedCoursesList);
-	// const [allAuthors, setAllAuthors] = useState<AuthorType[]>(mockedAuthorsList);
 
 	const navigate = useNavigate();
 
@@ -72,21 +64,6 @@ function App() {
 		}
 	}, [dispatch]);
 
-	// dispatch(getCourses(mockedCoursesList));
-
-	// useEffect(() => {
-	// const coursesList = async () => {
-	// 	const response = (await CoursesAPI.getCourses()) as CourseType[];
-	// 	console.log(response);
-	// 	if (response) {
-	// 		dispatch(getCourses(response));
-	// 	} else {
-	// 		console.log(`Something goes wrong`);
-	// 	}
-	// };
-	// coursesList();
-	// }, [dispatch]);
-
 	const handleLogin = (response: TokenResponse) => {
 		dispatch(loginUser(response));
 		// const authorizeUser = async () => {
@@ -99,8 +76,6 @@ function App() {
 		// };
 		// console.log(authorizeUser());
 
-		// setToken(response.result);
-		// setUserName(response.user.name);
 		mockedCoursesList.forEach((course) => {
 			const addingCourse = async () => {
 				const result = await CoursesAPI.addCourse(course, token);
@@ -115,9 +90,8 @@ function App() {
 		mockedAuthorsList.forEach((author) => {
 			const addingAuthor = async () => {
 				const result = await AuthorsAPI.addAuthor({ name: author.name }, token);
-				console.log(result);
 				if (result) {
-					// dispatch(addCourse(result));
+					dispatch(addAuthor(result));
 				}
 			};
 			addingAuthor();
@@ -129,8 +103,6 @@ function App() {
 		localStorage.removeItem('userName');
 		localStorage.removeItem('email');
 		dispatch(logoutUser());
-		// setToken(null);
-		// setUserName(null);
 	};
 
 	const creationCoursesHandler = (
@@ -145,13 +117,6 @@ function App() {
 				),
 			])
 		);
-		// setCourses([...courses, course]);
-		// setAllAuthors([
-		// 	...allAuthors,
-		// 	...courseAuthors.filter(
-		// 		(atr) => !allAuthors.some((haveAuthor) => haveAuthor.id === atr.id)
-		// 	),
-		// ]);
 		navigate('/courses');
 	};
 
@@ -159,16 +124,12 @@ function App() {
 		<SharedContext.Provider
 			value={{
 				userName,
-				// setUserName,
 				handleLogout,
 				token,
-				// setToken,
 				isLoading,
 				setIsLoading,
 				courses,
-				// setCourses,
 				allAuthors,
-				// setAllAuthors,
 				creationCoursesHandler,
 				handleLogin,
 			}}
@@ -193,14 +154,7 @@ function App() {
 					<Route
 						path='/courses/add'
 						element={
-							token ? (
-								<CreateCourse
-								// onAdd={creationCoursesHandler}
-								// authors={allAuthors}
-								/>
-							) : (
-								<Navigate to='/login' replace />
-							)
+							token ? <CreateCourse /> : <Navigate to='/login' replace />
 						}
 					/>
 					<Route
