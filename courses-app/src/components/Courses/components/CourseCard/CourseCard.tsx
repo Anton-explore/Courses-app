@@ -10,17 +10,23 @@ import { useSharedState } from '../../../../hooks/useSharedState';
 import { Button } from '../../../../common/Button/Button';
 
 import {
+	StyledButtonWrapper,
 	StyledCardWrapper,
 	StyledDataWrapper,
 	StyledInnerWrapper,
 	StyledTextWrapper,
 } from './CourseCard.style';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { faPen, faTrash } from '@fortawesome/free-solid-svg-icons';
+import { useAppDispatch } from '../../../../hooks/reduxHooks';
+import { deleteCourse } from '../../../../store/courses/coursesSlice';
 
 const CourseCard: FC<CourseCardType> = ({ course }) => {
 	const { allAuthors } = useSharedState();
 	const { id, title, duration, creationDate, description, authors } = course;
 
 	const navigate = useNavigate();
+	const dispatch = useAppDispatch();
 
 	const filteredAuthors = useMemo(() => {
 		return authors.map((authorId) => {
@@ -28,6 +34,10 @@ const CourseCard: FC<CourseCardType> = ({ course }) => {
 			return author ? author.name : '';
 		});
 	}, [authors, allAuthors]);
+
+	const deleteCourseHandler = () => {
+		dispatch(deleteCourse(id));
+	};
 
 	return (
 		<StyledCardWrapper key={id}>
@@ -47,10 +57,17 @@ const CourseCard: FC<CourseCardType> = ({ course }) => {
 						<strong>Created:</strong> {creationDate}
 					</p>
 				</StyledInnerWrapper>
-				<Button
-					text={BUTTONS_TEXT.SHOW}
-					onClick={() => navigate(`/courses/${id}`)}
-				/>
+				<StyledButtonWrapper>
+					<Button
+						text={BUTTONS_TEXT.SHOW}
+						onClick={() => navigate(`/courses/${id}`)}
+					/>
+					<Button text={<FontAwesomeIcon icon={faPen} />} />
+					<Button
+						text={<FontAwesomeIcon icon={faTrash} />}
+						onClick={deleteCourseHandler}
+					/>
+				</StyledButtonWrapper>
 			</StyledDataWrapper>
 		</StyledCardWrapper>
 	);

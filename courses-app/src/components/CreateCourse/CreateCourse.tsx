@@ -20,6 +20,8 @@ import {
 } from './CreateCourse.style';
 
 import { useSharedState } from '../../hooks/useSharedState';
+import { useAppDispatch } from '../../hooks/reduxHooks';
+import { addAuthor } from '../../store/authors/authorsSlice';
 
 const initialFormState: CourseType = {
 	id: '',
@@ -31,11 +33,13 @@ const initialFormState: CourseType = {
 };
 
 const CreateCourse: React.FC = () => {
-	const { allAuthors, setAllAuthors, creationCoursesHandler } =
-		useSharedState();
+	const { allAuthors, creationCoursesHandler } = useSharedState();
+	const [authors, setAuthors] = useState<AuthorType[]>(allAuthors);
 	const [newCourse, setNewCourse] = useState<CourseType>(initialFormState);
 	const [courseAuthors, setCourseAuthors] = useState<AuthorType[]>([]);
 	const [newAuthor, setNewAuthor] = useState('');
+
+	const dispatch = useAppDispatch();
 
 	const handlerTitleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
 		setNewCourse({ ...newCourse, title: e.target.value });
@@ -89,7 +93,7 @@ const CreateCourse: React.FC = () => {
 			alert('Too short name');
 			return;
 		}
-		if (allAuthors.some((author) => author.name === newAuthor)) {
+		if (authors.some((author) => author.name === newAuthor)) {
 			alert('This author is already been');
 			return;
 		}
@@ -97,16 +101,17 @@ const CreateCourse: React.FC = () => {
 			id: uuid(),
 			name: newAuthor,
 		};
-		setAllAuthors([...allAuthors, newAuthorData]);
+		setAuthors([...authors, newAuthorData]);
+		dispatch(addAuthor([newAuthorData]));
 		setNewAuthor('');
 	};
 	const authorInsertHandler = (author: AuthorType) => {
 		setCourseAuthors([...courseAuthors, author]);
-		setAllAuthors(allAuthors.filter((a) => a.id !== author.id));
+		setAuthors(authors.filter((a) => a.id !== author.id));
 	};
 	const authorDeleteHandler = (author: AuthorType) => {
 		setCourseAuthors(courseAuthors.filter((a) => a.id !== author.id));
-		setAllAuthors([...allAuthors, author]);
+		setAuthors([...authors, author]);
 	};
 
 	return (
@@ -175,7 +180,7 @@ const CreateCourse: React.FC = () => {
 					<StyledAuthorBlock>
 						<h3>Authors</h3>
 						<StyledDataInnerWrapper>
-							{allAuthors.map((author, index) => (
+							{authors.map((author) => (
 								<StyledAuthorChange key={author.id}>
 									<p>{author.name}</p>
 									<Button

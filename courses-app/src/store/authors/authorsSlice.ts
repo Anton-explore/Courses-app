@@ -1,27 +1,27 @@
 import { createSlice, PayloadAction } from '@reduxjs/toolkit';
-import { AuthorType } from '../../types';
+import { AuthorsState, AuthorType } from '../../types';
 
-const initialState: AuthorType[] = [];
+const initialState: AuthorsState = { authors: [] };
 
 export const authorsSlice = createSlice({
 	name: 'authors',
 	initialState,
 	reducers: {
 		getAuthors: (
-			state: AuthorType[],
+			state: AuthorsState,
 			{ payload }: PayloadAction<AuthorType[]>
 		) => {
-			state = [...payload];
+			state.authors = [...payload];
 		},
 		addAuthor: (
-			state: AuthorType[],
-			{ payload }: PayloadAction<AuthorType>
+			state: AuthorsState,
+			{ payload }: PayloadAction<AuthorType[]>
 		) => {
-			state = [payload, ...state];
+			state.authors = [...payload, ...state.authors];
 		},
 
-		deleteAuthor: (state: AuthorType[], { payload }: PayloadAction<string>) => {
-			state = state.filter((author) => author.id !== payload);
+		deleteAuthor: (state: AuthorsState, { payload }: PayloadAction<string>) => {
+			state.authors = state.authors.filter((author) => author.id !== payload);
 		},
 	},
 });

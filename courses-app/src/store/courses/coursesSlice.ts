@@ -1,27 +1,27 @@
 import { createSlice, PayloadAction } from '@reduxjs/toolkit';
-import { CourseType } from '../../types';
+import { CoursesState, CourseType } from '../../types';
 
-const initialState: CourseType[] = [];
+const initialState: CoursesState = { courses: [] };
 
 export const coursesSlice = createSlice({
 	name: 'courses',
 	initialState,
 	reducers: {
 		getCourses: (
-			state: CourseType[],
+			state: CoursesState,
 			{ payload }: PayloadAction<CourseType[]>
 		) => {
-			state = [...payload];
+			state.courses = [...payload];
 		},
 		addCourse: (
-			state: CourseType[],
+			state: CoursesState,
 			{ payload }: PayloadAction<CourseType>
 		) => {
-			state = [payload, ...state];
+			state.courses = [payload, ...state.courses];
 		},
 
-		deleteCourse: (state: CourseType[], { payload }: PayloadAction<string>) => {
-			state = state.filter((course) => course.id !== payload);
+		deleteCourse: (state: CoursesState, { payload }: PayloadAction<string>) => {
+			state.courses = state.courses.filter((course) => course.id !== payload);
 		},
 	},
 });

@@ -1,38 +1,32 @@
 import { createSlice, PayloadAction } from '@reduxjs/toolkit';
 import { TokenResponse, UserType } from '../../types';
 
-const initialState: { user: UserType } = {
-	user: {
-		isAuth: false,
-		name: '',
-		email: '',
-		token: '',
-		// error: null,
-	},
+const initialState: UserType = {
+	isAuth: false,
+	name: '',
+	email: '',
+	token: '',
+	// error: null,
 };
 
 export const userSlice = createSlice({
 	name: 'user',
 	initialState,
 	reducers: {
-		loginUser: (
-			state: { user: UserType },
-			{ payload }: PayloadAction<TokenResponse>
-		) => {
-			state.user = {
-				isAuth: payload.successful,
-				token: payload.result,
-				name: payload.user.name,
-				email: payload.user.email,
-			};
+		loginUser: (state: UserType, { payload }: PayloadAction<TokenResponse>) => {
+			state.isAuth = payload.successful;
+			state.token = payload.result;
+			state.name = payload.user.name === 'null' ? 'Admin' : payload.user.name;
+			state.email = payload.user.email;
 			localStorage.setItem('token', payload.result);
 			localStorage.setItem('userName', payload.user.name);
+			localStorage.setItem('email', payload.user.email);
 		},
-		logoutUser: (state: { user: UserType }) => {
-			state.user.isAuth = false;
-			state.user.token = '';
-			state.user.name = '';
-			state.user.email = '';
+		logoutUser: (state: UserType) => {
+			state.isAuth = false;
+			state.token = '';
+			state.name = '';
+			state.email = '';
 		},
 	},
 });

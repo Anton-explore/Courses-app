@@ -7,10 +7,18 @@ export interface CourseType {
 	authors: string[];
 }
 
+export interface CoursesState {
+	courses: CourseType[];
+}
+
 export type AuthorType = {
 	id: string;
 	name: string;
 };
+
+export interface AuthorsState {
+	authors: AuthorType[];
+}
 
 export type InputProps = {
 	placeholder?: string;
@@ -24,7 +32,7 @@ export type InputProps = {
 
 export type ButtonProps = {
 	type?: 'button' | 'submit' | 'reset';
-	text: string;
+	text: string | JSX.Element;
 	onClick?: () => void;
 };
 
@@ -56,9 +64,9 @@ export interface GlobalSharedContext {
 	isLoading: boolean;
 	setIsLoading: React.Dispatch<React.SetStateAction<boolean>>;
 	courses: CourseType[];
-	setCourses: React.Dispatch<React.SetStateAction<CourseType[]>>;
+	// setCourses: React.Dispatch<React.SetStateAction<CourseType[]>>;
 	allAuthors: AuthorType[];
-	setAllAuthors: React.Dispatch<React.SetStateAction<AuthorType[]>>;
+	// setAllAuthors: React.Dispatch<React.SetStateAction<AuthorType[]>>;
 	creationCoursesHandler: (
 		course: CourseType,
 		courseAuthors: AuthorType[]

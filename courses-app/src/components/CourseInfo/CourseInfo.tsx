@@ -12,6 +12,8 @@ import {
 	StyledLink,
 	StyledTitle,
 } from './CourseInfo.style';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { faChevronLeft } from '@fortawesome/free-solid-svg-icons';
 
 const CourseInfo: React.FC = () => {
 	const { courses, allAuthors } = useSharedState();
@@ -38,7 +40,9 @@ const CourseInfo: React.FC = () => {
 
 	return (
 		<StyledCardWrapper>
-			<StyledLink to='/courses'>&#8678; Back to courses</StyledLink>
+			<StyledLink to='/courses'>
+				<FontAwesomeIcon icon={faChevronLeft} /> Back to courses
+			</StyledLink>
 			<StyledTitle>{title}</StyledTitle>
 			<StyledDataWrapper>
 				<StyledText>{description}</StyledText>
