@@ -19,36 +19,43 @@ import {
 } from './types';
 
 import { StyledWrapper } from './App.style';
+import { useAppDispatch, useAppSelector } from './hooks/reduxHooks';
+import { loginUser, logoutUser } from './store/user/userSlice';
+import { selectToken, selectUserName } from './store/selectors';
 
 export const SharedContext = createContext<GlobalSharedContext | undefined>(
 	undefined
 );
 
 function App() {
-	const [token, setToken] = useState<string | null>(
-		localStorage.getItem('token')
-	);
-	const [userName, setUserName] = useState<string | null>(
-		localStorage.getItem('userName')
-	);
+	const dispatch = useAppDispatch();
+
+	// const [token, setToken] = useState<string | null>(
+	// 	localStorage.getItem('token')
+	// );
+	// const [userName, setUserName] = useState<string | null>(
+	// 	localStorage.getItem('userName')
+	// );
+	const token = useAppSelector(selectToken);
+	const userName = useAppSelector(selectUserName);
 	const [isLoading, setIsLoading] = useState<boolean>(false);
 	const [courses, setCourses] = useState<CourseType[]>(mockedCoursesList);
 	const [allAuthors, setAllAuthors] = useState<AuthorType[]>(mockedAuthorsList);
 
 	const navigate = useNavigate();
 
-	const handleLogin = ({ result, user }: TokenResponse) => {
-		localStorage.setItem('token', result);
-		localStorage.setItem('userName', user.name);
-		setToken(result);
-		setUserName(user.name);
+	const handleLogin = (response: TokenResponse) => {
+		dispatch(loginUser(response));
+		// setToken(response.result);
+		// setUserName(response.user.name);
 	};
 
 	const handleLogout = () => {
 		localStorage.removeItem('token');
 		localStorage.removeItem('userName');
-		setToken(null);
-		setUserName(null);
+		dispatch(logoutUser());
+		// setToken(null);
+		// setUserName(null);
 	};
 
 	const creationCoursesHandler = (
@@ -69,10 +76,10 @@ function App() {
 		<SharedContext.Provider
 			value={{
 				userName,
-				setUserName,
+				// setUserName,
 				handleLogout,
 				token,
-				setToken,
+				// setToken,
 				isLoading,
 				setIsLoading,
 				courses,
