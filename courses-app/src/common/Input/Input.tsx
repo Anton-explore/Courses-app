@@ -5,6 +5,8 @@ export const Input = ({
 	placeholder,
 	value,
 	label,
+	type,
+	name,
 	htmlFor,
 	onChange,
 }: InputProps) => {
@@ -13,7 +15,8 @@ export const Input = ({
 			{label && <label htmlFor={htmlFor}>{label}</label>}
 			<StyledInput
 				id={htmlFor}
-				type='text'
+				name={name}
+				type={type || 'text'}
 				placeholder={placeholder}
 				value={value}
 				onChange={onChange}

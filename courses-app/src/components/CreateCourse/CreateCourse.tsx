@@ -3,10 +3,12 @@ import { v4 as uuid } from 'uuid';
 
 import { Button } from '../../common/Button/Button';
 import { Input } from '../../common/Input/Input';
+
 import { BUTTONS_TEXT, INPUTS_TEXT } from '../../constants';
 import { formatDate } from '../../helpers/dateGenerator';
 import { formatDuration } from '../../helpers/pipeDuration';
-import { AuthorType, CourseType, CreateCourseProps } from '../../types';
+import { AuthorType, CourseType } from '../../types';
+
 import {
 	StyledAuthorBlock,
 	StyledAuthorChange,
@@ -17,6 +19,8 @@ import {
 	StyledFormWrapper,
 } from './CreateCourse.style';
 
+import { useSharedState } from '../../hooks/useSharedState';
+
 const initialFormState: CourseType = {
 	id: '',
 	title: '',
@@ -26,9 +30,10 @@ const initialFormState: CourseType = {
 	authors: [],
 };
 
-const CreateCourse: React.FC<CreateCourseProps> = ({ onAdd, authors }) => {
+const CreateCourse: React.FC = () => {
+	const { allAuthors, setAllAuthors, creationCoursesHandler } =
+		useSharedState();
 	const [newCourse, setNewCourse] = useState<CourseType>(initialFormState);
-	const [allAuthors, setAllAuthors] = useState<AuthorType[]>(authors);
 	const [courseAuthors, setCourseAuthors] = useState<AuthorType[]>([]);
 	const [newAuthor, setNewAuthor] = useState('');
 
@@ -70,9 +75,10 @@ const CreateCourse: React.FC<CreateCourseProps> = ({ onAdd, authors }) => {
 			return;
 		}
 		const addNewCourse = addProperties();
-		onAdd(addNewCourse, courseAuthors);
+		creationCoursesHandler(addNewCourse, courseAuthors);
 		setNewCourse(initialFormState);
-		setAllAuthors(authors);
+		// setAllAuthors(authors);
+		// navigate('/courses');
 	};
 
 	const handlerAuthorChange = (e: React.ChangeEvent<HTMLInputElement>) => {
