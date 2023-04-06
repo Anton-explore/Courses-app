@@ -1,5 +1,11 @@
-import { useState, createContext } from 'react';
-import { Routes, Route, Navigate, useNavigate } from 'react-router-dom';
+import { useState, createContext, useEffect } from 'react';
+import {
+	Routes,
+	Route,
+	Navigate,
+	useNavigate,
+	useLocation,
+} from 'react-router-dom';
 
 import Courses from './components/Courses/Courses';
 import Header from './components/Header/Header';
@@ -36,6 +42,19 @@ function App() {
 	const [allAuthors, setAllAuthors] = useState<AuthorType[]>(mockedAuthorsList);
 
 	const navigate = useNavigate();
+	const location = useLocation();
+
+	useEffect(() => {
+		!token &&
+			location.pathname !== '/login' &&
+			location.pathname !== '/registration' &&
+			navigate('/login');
+
+		token &&
+			(location.pathname === '/login' ||
+				location.pathname === '/registration') &&
+			navigate('/courses');
+	}, [token, location, navigate]);
 
 	const handleLogin = ({ result, user }: TokenResponse) => {
 		localStorage.setItem('token', result);
@@ -86,56 +105,14 @@ function App() {
 			<StyledWrapper>
 				<Header />
 				<Routes>
-					<Route
-						path='/'
-						element={
-							token ? (
-								<Navigate to='/courses' />
-							) : (
-								<Navigate to='/login' replace />
-							)
-						}
-					/>
-					<Route
-						path='/courses'
-						element={token ? <Courses /> : <Navigate to='/login' replace />}
-					/>
-					<Route
-						path='/courses/add'
-						element={
-							token ? (
-								<CreateCourse
-								// onAdd={creationCoursesHandler}
-								// authors={allAuthors}
-								/>
-							) : (
-								<Navigate to='/login' replace />
-							)
-						}
-					/>
-					<Route
-						path='/courses/:courseId'
-						element={token ? <CourseInfo /> : <Navigate to='/login' replace />}
-					/>
-					{!token && <Route path='/registration' element={<Registration />} />}
-					{!token && <Route path='/login' element={<Login />} />}
-					{token && (
-						<Route path='/login' element={<Navigate to='/courses' replace />} />
-					)}
-					<Route
-						path='/not-found'
-						element={token ? <NotFound /> : <Navigate to='/login' replace />}
-					/>
-					<Route
-						path='*'
-						element={
-							token ? (
-								<Navigate to='/not-found' replace />
-							) : (
-								<Navigate to='/login' replace />
-							)
-						}
-					/>
+					<Route path='/' element={<Navigate to='/courses' />} />
+					<Route path='/courses' element={<Courses />} />
+					<Route path='/courses/add' element={<CreateCourse />} />
+					<Route path='/courses/:courseId' element={<CourseInfo />} />
+					<Route path='/registration' element={<Registration />} />
+					<Route path='/login' element={<Login />} />
+					<Route path='/not-found' element={<NotFound />} />
+					<Route path='*' element={<Navigate to='/not-found' replace />} />
 				</Routes>
 			</StyledWrapper>
 		</SharedContext.Provider>

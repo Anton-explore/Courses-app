@@ -32,7 +32,6 @@ const Login: React.FC = () => {
 			navigate('/courses');
 			return response;
 		} catch (error: any) {
-			console.log(error.message);
 			setLoginError(`You need register first: ${error.message}`);
 			return;
 		}

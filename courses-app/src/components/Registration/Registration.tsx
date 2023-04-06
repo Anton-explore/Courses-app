@@ -1,5 +1,6 @@
 import { useFormik } from 'formik';
 import { useNavigate, Link } from 'react-router-dom';
+import { useState } from 'react';
 
 import { Input } from '../../common/Input/Input';
 import { Button } from '../../common/Button/Button';
@@ -12,6 +13,8 @@ import { validatePassword } from '../../helpers/loginFormValidation';
 import { StyledForm } from '../Login/Login.style';
 
 const Registration: React.FC = () => {
+	const [authError, setAuthError] = useState<string | null>(null);
+
 	const navigate = useNavigate();
 
 	const initialValues: LoginValues = {
@@ -28,8 +31,10 @@ const Registration: React.FC = () => {
 			}
 			return response;
 		} catch (error: any) {
-			console.log(error.message);
-			return error.message;
+			setAuthError(
+				`Something goes wrong: ${error.message}. Please check server connection, or this user is already registered`
+			);
+			return;
 		}
 	};
 
@@ -73,6 +78,7 @@ const Registration: React.FC = () => {
 			{formik.touched.password && formik.errors.password ? (
 				<div>{formik.errors.password}</div>
 			) : null}
+			{authError && <div>{authError}</div>}
 			<Button type='submit' text={BUTTONS_TEXT.REG} />
 			<p>
 				If you have an account you can <Link to='/login'>Login</Link>
