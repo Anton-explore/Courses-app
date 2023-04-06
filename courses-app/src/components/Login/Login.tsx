@@ -28,13 +28,10 @@ const Login: React.FC = () => {
 		try {
 			const response = await UserAPI.login(formData);
 			const { result, user, successful } = response;
-			// const userData = await UserAPI.getUserDetails(result);
-			// console.log(userData.result.role);
 			handleLogin({ result, user, successful });
 			navigate('/courses');
 			return response;
 		} catch (error: any) {
-			console.log(error.message);
 			setLoginError(`You need register first: ${error.message}`);
 			return;
 		}

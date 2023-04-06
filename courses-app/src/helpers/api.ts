@@ -1,5 +1,11 @@
 import axios from 'axios';
-import { CourseType, LoginValues } from '../types';
+import {
+	AuthorsResponseType,
+	CourseType,
+	CoursesResponseType,
+	LoginValues,
+	TokenResponse,
+} from '../types';
 
 axios.defaults.baseURL = 'http://localhost:4000';
 
@@ -9,7 +15,7 @@ export const UserAPI = {
 		return data;
 	},
 	async login(formData: LoginValues) {
-		const { data } = await axios.post(`/login`, formData);
+		const { data } = await axios.post<TokenResponse>(`/login`, formData);
 		return data;
 	},
 	async getUserDetails(token: string) {
@@ -28,7 +34,7 @@ export const UserAPI = {
 
 export const CoursesAPI = {
 	async getCourses() {
-		const { data } = await axios.get<CourseType[]>(`/courses/all`);
+		const { data } = await axios.get<CoursesResponseType>(`/courses/all`);
 		return data;
 	},
 	async addCourse(courseData: CourseType, token: string) {
@@ -51,7 +57,7 @@ export const CoursesAPI = {
 
 export const AuthorsAPI = {
 	async getAuthors() {
-		const { data } = await axios.get(`/authors/all`);
+		const { data } = await axios.get<AuthorsResponseType>(`/authors/all`);
 		return data;
 	},
 	async addAuthor(authorData: { name: string }, token: string) {

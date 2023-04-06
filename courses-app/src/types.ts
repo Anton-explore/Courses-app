@@ -20,6 +20,16 @@ export interface AuthorsState {
 	authors: AuthorType[];
 }
 
+export type CoursesResponseType = {
+	successful: boolean;
+	result: CourseType[];
+};
+
+export type AuthorsResponseType = {
+	successful: boolean;
+	result: AuthorType[];
+};
+
 export type InputProps = {
 	placeholder?: string;
 	value?: string | number;

@@ -1,5 +1,11 @@
 import { useState, createContext, useEffect } from 'react';
-import { Routes, Route, Navigate, useNavigate } from 'react-router-dom';
+import {
+	Routes,
+	Route,
+	Navigate,
+	useNavigate,
+	useLocation,
+} from 'react-router-dom';
 
 import Courses from './components/Courses/Courses';
 import Header from './components/Header/Header';
@@ -46,6 +52,19 @@ function App() {
 	const [isLoading, setIsLoading] = useState<boolean>(false);
 
 	const navigate = useNavigate();
+	const location = useLocation();
+
+	useEffect(() => {
+		!token &&
+			location.pathname !== '/login' &&
+			location.pathname !== '/registration' &&
+			navigate('/login');
+
+		token &&
+			(location.pathname === '/login' ||
+				location.pathname === '/registration') &&
+			navigate('/courses');
+	}, [token, location, navigate]);
 
 	useEffect(() => {
 		if (localStorage.getItem('token')) {
@@ -65,37 +84,29 @@ function App() {
 	}, [dispatch]);
 
 	const handleLogin = (response: TokenResponse) => {
+		const coursesList = async () => {
+			try {
+				const result = await CoursesAPI.getCourses();
+				dispatch(getCourses(result.result));
+				return result;
+			} catch (error) {
+				dispatch(getCourses(mockedCoursesList));
+				return error;
+			}
+		};
+		const authorsList = async () => {
+			try {
+				const result = await AuthorsAPI.getAuthors();
+				dispatch(getAuthors(result.result));
+				return result;
+			} catch (error) {
+				dispatch(getAuthors(mockedAuthorsList));
+				return error;
+			}
+		};
+		coursesList();
+		authorsList();
 		dispatch(loginUser(response));
-		// const authorizeUser = async () => {
-		// 	try {
-		// 		const result = await UserAPI.getUserDetails(response.result);
-		// 		return result;
-		// 	} catch (error) {
-		// 		console.log(error);
-		// 	}
-		// };
-		// console.log(authorizeUser());
-
-		mockedCoursesList.forEach((course) => {
-			const addingCourse = async () => {
-				const result = await CoursesAPI.addCourse(course, token);
-				console.log(result);
-				if (result) {
-					dispatch(addCourse(course));
-				}
-			};
-			addingCourse();
-		});
-
-		mockedAuthorsList.forEach((author) => {
-			const addingAuthor = async () => {
-				const result = await AuthorsAPI.addAuthor({ name: author.name }, token);
-				if (result) {
-					dispatch(addAuthor(result));
-				}
-			};
-			addingAuthor();
-		});
 	};
 
 	const handleLogout = () => {
@@ -137,49 +148,14 @@ function App() {
 			<StyledWrapper>
 				<Header />
 				<Routes>
-					<Route
-						path='/'
-						element={
-							token ? (
-								<Navigate to='/courses' />
-							) : (
-								<Navigate to='/login' replace />
-							)
-						}
-					/>
-					<Route
-						path='/courses'
-						element={token ? <Courses /> : <Navigate to='/login' replace />}
-					/>
-					<Route
-						path='/courses/add'
-						element={
-							token ? <CreateCourse /> : <Navigate to='/login' replace />
-						}
-					/>
-					<Route
-						path='/courses/:courseId'
-						element={token ? <CourseInfo /> : <Navigate to='/login' replace />}
-					/>
-					{!token && <Route path='/registration' element={<Registration />} />}
-					{!token && <Route path='/login' element={<Login />} />}
-					{token && (
-						<Route path='/login' element={<Navigate to='/courses' replace />} />
-					)}
-					<Route
-						path='/not-found'
-						element={token ? <NotFound /> : <Navigate to='/login' replace />}
-					/>
-					<Route
-						path='*'
-						element={
-							token ? (
-								<Navigate to='/not-found' replace />
-							) : (
-								<Navigate to='/login' replace />
-							)
-						}
-					/>
+					<Route path='/' element={<Navigate to='/courses' />} />
+					<Route path='/courses' element={<Courses />} />
+					<Route path='/courses/add' element={<CreateCourse />} />
+					<Route path='/courses/:courseId' element={<CourseInfo />} />
+					<Route path='/registration' element={<Registration />} />
+					<Route path='/login' element={<Login />} />
+					<Route path='/not-found' element={<NotFound />} />
+					<Route path='*' element={<Navigate to='/not-found' replace />} />
 				</Routes>
 			</StyledWrapper>
 		</SharedContext.Provider>
