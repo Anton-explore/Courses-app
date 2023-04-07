@@ -27,8 +27,8 @@ const Login: React.FC = () => {
 	const onSubmit = async (formData: LoginValues) => {
 		try {
 			const response = await UserAPI.login(formData);
-			const { result, user } = response;
-			handleLogin({ result, user });
+			const { result, user, successful } = response;
+			handleLogin({ result, user, successful });
 			navigate('/courses');
 			return response;
 		} catch (error: any) {

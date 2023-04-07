@@ -9,11 +9,11 @@ export const StyledCardWrapper = styled.div`
 `;
 
 export const StyledTextWrapper = styled.div`
-	width: 80vw;
+	width: 60vw;
 `;
 
 export const StyledDataWrapper = styled.div`
-	width: 20vw;
+	width: 30vw;
 	display: flex;
 	flex-direction: column;
 	gap: 20px;
@@ -22,4 +22,10 @@ export const StyledDataWrapper = styled.div`
 
 export const StyledInnerWrapper = styled.div`
 	width: 100%;
+`;
+
+export const StyledButtonWrapper = styled.div`
+	width: 100%;
+	display: flex;
+	justify-content: flex-end;
 `;

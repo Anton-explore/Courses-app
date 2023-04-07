@@ -7,9 +7,27 @@ export interface CourseType {
 	authors: string[];
 }
 
+export interface CoursesState {
+	courses: CourseType[];
+}
+
 export type AuthorType = {
 	id: string;
 	name: string;
+};
+
+export interface AuthorsState {
+	authors: AuthorType[];
+}
+
+export type CoursesResponseType = {
+	successful: boolean;
+	result: CourseType[];
+};
+
+export type AuthorsResponseType = {
+	successful: boolean;
+	result: AuthorType[];
 };
 
 export type InputProps = {
@@ -24,7 +42,7 @@ export type InputProps = {
 
 export type ButtonProps = {
 	type?: 'button' | 'submit' | 'reset';
-	text: string;
+	text: string | JSX.Element;
 	onClick?: () => void;
 };
 
@@ -49,16 +67,14 @@ export interface LoginValues {
 
 export interface GlobalSharedContext {
 	userName: string | null;
-	setUserName: React.Dispatch<React.SetStateAction<any>>;
+	setUserName?: React.Dispatch<React.SetStateAction<any>>;
 	handleLogout: () => Promise<void> | void;
 	token: string | null;
-	setToken: React.Dispatch<React.SetStateAction<any>>;
+	setToken?: React.Dispatch<React.SetStateAction<any>>;
 	isLoading: boolean;
 	setIsLoading: React.Dispatch<React.SetStateAction<boolean>>;
 	courses: CourseType[];
-	setCourses: React.Dispatch<React.SetStateAction<CourseType[]>>;
 	allAuthors: AuthorType[];
-	setAllAuthors: React.Dispatch<React.SetStateAction<AuthorType[]>>;
 	creationCoursesHandler: (
 		course: CourseType,
 		courseAuthors: AuthorType[]
@@ -67,6 +83,26 @@ export interface GlobalSharedContext {
 }
 
 export type TokenResponse = {
+	successful: boolean;
 	result: string;
 	user: { name: string; email: string };
+};
+
+export type UserDetailResponse = {
+	result: {
+		email: string;
+		id: string;
+		name: string;
+		password: string;
+		role: string;
+	};
+	successful: boolean;
+};
+
+export type UserType = {
+	isAuth: boolean;
+	token: string;
+	name: string;
+	email: string;
+	// error: string;
 };

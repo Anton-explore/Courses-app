@@ -25,21 +25,31 @@ import {
 } from './types';
 
 import { StyledWrapper } from './App.style';
+import { useAppDispatch, useAppSelector } from './hooks/reduxHooks';
+import { loginUser, logoutUser } from './store/user/userSlice';
+import {
+	selectAuthors,
+	selectCourses,
+	selectToken,
+	selectUserName,
+} from './store/selectors';
+import { CoursesAPI, AuthorsAPI } from './helpers/api';
+import { addCourse, getCourses } from './store/courses/coursesSlice';
+import { addAuthor, getAuthors } from './store/authors/authorsSlice';
+// import { UserAPI } from './helpers/api';
 
 export const SharedContext = createContext<GlobalSharedContext | undefined>(
 	undefined
 );
 
 function App() {
-	const [token, setToken] = useState<string | null>(
-		localStorage.getItem('token')
-	);
-	const [userName, setUserName] = useState<string | null>(
-		localStorage.getItem('userName')
-	);
+	const dispatch = useAppDispatch();
+
+	const token = useAppSelector(selectToken);
+	const userName = useAppSelector(selectUserName);
+	const courses = useAppSelector(selectCourses);
+	const allAuthors = useAppSelector(selectAuthors);
 	const [isLoading, setIsLoading] = useState<boolean>(false);
-	const [courses, setCourses] = useState<CourseType[]>(mockedCoursesList);
-	const [allAuthors, setAllAuthors] = useState<AuthorType[]>(mockedAuthorsList);
 
 	const navigate = useNavigate();
 	const location = useLocation();
@@ -56,31 +66,68 @@ function App() {
 			navigate('/courses');
 	}, [token, location, navigate]);
 
-	const handleLogin = ({ result, user }: TokenResponse) => {
-		localStorage.setItem('token', result);
-		localStorage.setItem('userName', user.name);
-		setToken(result);
-		setUserName(user.name);
+	useEffect(() => {
+		if (localStorage.getItem('token')) {
+			dispatch(
+				loginUser({
+					successful: true,
+					result: localStorage.getItem('token') as string,
+					user: {
+						name: localStorage.getItem('userName') as string,
+						email: localStorage.getItem('email') as string,
+					},
+				})
+			);
+			dispatch(getCourses(mockedCoursesList));
+			dispatch(getAuthors(mockedAuthorsList));
+		}
+	}, [dispatch]);
+
+	const handleLogin = (response: TokenResponse) => {
+		const coursesList = async () => {
+			try {
+				const result = await CoursesAPI.getCourses();
+				dispatch(getCourses(result.result));
+				return result;
+			} catch (error) {
+				dispatch(getCourses(mockedCoursesList));
+				return error;
+			}
+		};
+		const authorsList = async () => {
+			try {
+				const result = await AuthorsAPI.getAuthors();
+				dispatch(getAuthors(result.result));
+				return result;
+			} catch (error) {
+				dispatch(getAuthors(mockedAuthorsList));
+				return error;
+			}
+		};
+		coursesList();
+		authorsList();
+		dispatch(loginUser(response));
 	};
 
 	const handleLogout = () => {
 		localStorage.removeItem('token');
 		localStorage.removeItem('userName');
-		setToken(null);
-		setUserName(null);
+		localStorage.removeItem('email');
+		dispatch(logoutUser());
 	};
 
 	const creationCoursesHandler = (
 		course: CourseType,
 		courseAuthors: AuthorType[]
 	) => {
-		setCourses([...courses, course]);
-		setAllAuthors([
-			...allAuthors,
-			...courseAuthors.filter(
-				(atr) => !allAuthors.some((haveAuthor) => haveAuthor.id === atr.id)
-			),
-		]);
+		dispatch(addCourse(course));
+		dispatch(
+			addAuthor([
+				...courseAuthors.filter(
+					(atr) => !allAuthors.some((haveAuthor) => haveAuthor.id === atr.id)
+				),
+			])
+		);
 		navigate('/courses');
 	};
 
@@ -88,16 +135,12 @@ function App() {
 		<SharedContext.Provider
 			value={{
 				userName,
-				setUserName,
 				handleLogout,
 				token,
-				setToken,
 				isLoading,
 				setIsLoading,
 				courses,
-				setCourses,
 				allAuthors,
-				setAllAuthors,
 				creationCoursesHandler,
 				handleLogin,
 			}}
