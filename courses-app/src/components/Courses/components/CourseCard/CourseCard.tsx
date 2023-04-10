@@ -19,10 +19,10 @@ import {
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faPen, faTrash } from '@fortawesome/free-solid-svg-icons';
 import { useAppDispatch } from '../../../../hooks/reduxHooks';
-import { deleteCourse } from '../../../../store/courses/coursesSlice';
+import { deleteCourseRequest } from '../../../../store/courses/coursesSlice';
 
 const CourseCard: FC<CourseCardType> = ({ course }) => {
-	const { allAuthors } = useSharedState();
+	const { allAuthors, token, role } = useSharedState();
 	const { id, title, duration, creationDate, description, authors } = course;
 
 	const navigate = useNavigate();
@@ -36,7 +36,9 @@ const CourseCard: FC<CourseCardType> = ({ course }) => {
 	}, [authors, allAuthors]);
 
 	const deleteCourseHandler = () => {
-		dispatch(deleteCourse(id));
+		if (id && token) {
+			dispatch(deleteCourseRequest({ id, token }));
+		}
 	};
 
 	return (
@@ -62,11 +64,18 @@ const CourseCard: FC<CourseCardType> = ({ course }) => {
 						text={BUTTONS_TEXT.SHOW}
 						onClick={() => navigate(`/courses/${id}`)}
 					/>
-					<Button text={<FontAwesomeIcon icon={faPen} />} />
-					<Button
-						text={<FontAwesomeIcon icon={faTrash} />}
-						onClick={deleteCourseHandler}
-					/>
+					{role === 'admin' && (
+						<>
+							<Button
+								text={<FontAwesomeIcon icon={faPen} />}
+								onClick={() => navigate(`/courses/update/${id}`)}
+							/>
+							<Button
+								text={<FontAwesomeIcon icon={faTrash} />}
+								onClick={deleteCourseHandler}
+							/>
+						</>
+					)}
 				</StyledButtonWrapper>
 			</StyledDataWrapper>
 		</StyledCardWrapper>

@@ -1,17 +1,22 @@
 import axios from 'axios';
 import {
+	ChangeCourseResponse,
 	AuthorsResponseType,
+	ChangeAuthorResponse,
 	CourseType,
 	CoursesResponseType,
 	LoginValues,
 	TokenResponse,
+	UserDetailResponse,
+	DeleteResponse,
+	UserRegResponse,
 } from '../types';
 
 axios.defaults.baseURL = 'http://localhost:4000';
 
 export const UserAPI = {
 	async register(formData: LoginValues) {
-		const { data } = await axios.post(`/register`, formData);
+		const { data } = await axios.post<UserRegResponse>(`/register`, formData);
 		return data;
 	},
 	async login(formData: LoginValues) {
@@ -19,16 +24,16 @@ export const UserAPI = {
 		return data;
 	},
 	async getUserDetails(token: string) {
-		const { data } = await axios.get(`/users/me`, {
+		const { data } = await axios.get<UserDetailResponse>(`/users/me`, {
 			headers: { Authorization: `${token}` },
 		});
 		return data;
 	},
 	async logout(token: string) {
-		const { data } = await axios.delete(`/logout`, {
+		const result = await axios.delete(`/logout`, {
 			headers: { Authorization: `${token}` },
 		});
-		return data;
+		return result;
 	},
 };
 
@@ -38,9 +43,13 @@ export const CoursesAPI = {
 		return data;
 	},
 	async addCourse(courseData: CourseType, token: string) {
-		const { data } = await axios.post(`/courses/add`, courseData, {
-			headers: { Authorization: `${token}` },
-		});
+		const { data } = await axios.post<ChangeCourseResponse>(
+			`/courses/add`,
+			courseData,
+			{
+				headers: { Authorization: `${token}` },
+			}
+		);
 		return data;
 	},
 	async getCourse(courseId: string) {
@@ -53,6 +62,16 @@ export const CoursesAPI = {
 		});
 		return data;
 	},
+	async updateCourse(courseData: CourseType, id: string, token: string) {
+		const { data } = await axios.put<ChangeCourseResponse>(
+			`/courses/${id}`,
+			courseData,
+			{
+				headers: { Authorization: `${token}` },
+			}
+		);
+		return data;
+	},
 };
 
 export const AuthorsAPI = {
@@ -61,9 +80,13 @@ export const AuthorsAPI = {
 		return data;
 	},
 	async addAuthor(authorData: { name: string }, token: string) {
-		const { data } = await axios.post(`/authors/add`, authorData, {
-			headers: { Authorization: `${token}` },
-		});
+		const { data } = await axios.post<ChangeAuthorResponse>(
+			`/authors/add`,
+			authorData,
+			{
+				headers: { Authorization: `${token}` },
+			}
+		);
 		return data;
 	},
 	async getAuthor(authorId: string, token: string) {
@@ -73,9 +96,12 @@ export const AuthorsAPI = {
 		return data;
 	},
 	async deleteAuthor(authorId: string, token: string) {
-		const { data } = await axios.delete(`/authors/${authorId}`, {
-			headers: { Authorization: `${token}` },
-		});
+		const { data } = await axios.delete<DeleteResponse>(
+			`/authors/${authorId}`,
+			{
+				headers: { Authorization: `${token}` },
+			}
+		);
 		return data;
 	},
 };

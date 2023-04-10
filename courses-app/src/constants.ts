@@ -53,6 +53,7 @@ export const BUTTONS_TEXT = {
 	SHOW: 'Show course',
 	SHOWALL: 'Show course list',
 	CREATE_COURSE: 'Create course',
+	UPDATE_COURSE: 'Update course',
 	CREATE_AUTHOR: 'Create author',
 	ADD_AUTHOR: 'Add author',
 	DEL_AUTHOR: 'Delete author',

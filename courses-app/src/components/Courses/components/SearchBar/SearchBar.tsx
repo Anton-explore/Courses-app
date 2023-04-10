@@ -26,13 +26,10 @@ const SearchBar: React.FC<SearchBarProps> = ({ onSearch }) => {
 		if (!searchTerm) {
 			onSearch(courses);
 		}
+		const regex = new RegExp(searchTerm, 'gi');
 		const results = courses.filter((course) => {
-			const titleMatch = course.title
-				.toLowerCase()
-				.includes(searchTerm.toLowerCase());
-			const idMatch = course.id
-				.toLowerCase()
-				.includes(searchTerm.toLowerCase());
+			const titleMatch = course.title.match(regex);
+			const idMatch = course.id?.match(regex);
 			return titleMatch || idMatch;
 		});
 		onSearch(results);

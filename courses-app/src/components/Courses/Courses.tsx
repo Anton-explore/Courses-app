@@ -13,7 +13,7 @@ import { StyledCourses, StyledHeadingCourses } from './Courses.style';
 import { useSharedState } from '../../hooks/useSharedState';
 
 const Courses: React.FC = () => {
-	const { courses } = useSharedState();
+	const { courses, role } = useSharedState();
 
 	const [filteredCourses, setFilteredCourses] = useState(courses);
 
@@ -35,7 +35,9 @@ const Courses: React.FC = () => {
 		<StyledCourses>
 			<StyledHeadingCourses>
 				<SearchBar onSearch={filteringCoursesHandler} />
-				<Button text={BUTTONS_TEXT.ADD} onClick={addingCourseHandler} />
+				{role === 'admin' && (
+					<Button text={BUTTONS_TEXT.ADD} onClick={addingCourseHandler} />
+				)}
 			</StyledHeadingCourses>
 			{filteredCourses.length ? (
 				filteredCourses.map((course) => (

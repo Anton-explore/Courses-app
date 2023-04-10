@@ -1,24 +1,25 @@
-// import { useEffect } from 'react';
-// import { getCourses } from '../store/courses/coursesSlice';
-import { selectCourses } from '../store/selectors';
-import { useAppSelector } from './reduxHooks';
-// import { CoursesAPI, UserAPI } from '../helpers/api';
-// import { CourseType } from '../types';
+import { useEffect } from 'react';
+import { useAppDispatch, useAppSelector } from './reduxHooks';
+
+import { getCoursesRequest } from '../store/courses/coursesSlice';
+import { selectCoursesState } from '../store/selectors';
 
 const useCoursesHook = () => {
-	// const dispatch = useAppDispatch();
-	const courses = useAppSelector(selectCourses);
-	// const status = useAppSelector((store: RootState) => store.courses.isLoading);
-	// const error = useAppSelector((store: RootState) => store.courses.error);
+	const dispatch = useAppDispatch();
+	const {
+		courses,
+		status: courseStatus,
+		error: courseError,
+	} = useAppSelector(selectCoursesState);
 
-	// useEffect(() => {
-	// 	dispatch(getCourses());
-	// }, [dispatch]);
+	useEffect(() => {
+		dispatch(getCoursesRequest());
+	}, [dispatch]);
 
 	return {
 		courses,
-		// status,
-		// error,
+		status: courseStatus,
+		error: courseError,
 	};
 };
 

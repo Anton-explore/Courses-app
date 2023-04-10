@@ -1,5 +1,4 @@
-import { useState } from 'react';
-import { v4 as uuid } from 'uuid';
+import { useState, useEffect } from 'react';
 
 import { Button } from '../../common/Button/Button';
 import { Input } from '../../common/Input/Input';
@@ -7,7 +6,7 @@ import { Input } from '../../common/Input/Input';
 import { BUTTONS_TEXT, INPUTS_TEXT } from '../../constants';
 import { formatDate } from '../../helpers/dateGenerator';
 import { formatDuration } from '../../helpers/pipeDuration';
-import { AuthorType, CourseType } from '../../types';
+import { AuthorRequestType, AuthorType, CourseType } from '../../types';
 
 import {
 	StyledAuthorBlock,
@@ -17,11 +16,21 @@ import {
 	StyledTitleWrapper,
 	StyledInnerWrapper,
 	StyledFormWrapper,
-} from './CreateCourse.style';
+} from './CourseForm.style';
 
 import { useSharedState } from '../../hooks/useSharedState';
+import {
+	addAuthorRequest,
+	getAuthorsRequest,
+} from '../../store/authors/authorsSlice';
+import { useNavigate, useParams } from 'react-router-dom';
 import { useAppDispatch } from '../../hooks/reduxHooks';
-import { addAuthor } from '../../store/authors/authorsSlice';
+import {
+	addCourseRequest,
+	updateCourseRequest,
+} from '../../store/courses/coursesSlice';
+import useAuthorsHook from '../../hooks/useAuthorsHook';
+import Loader from '../../common/Loader/Loader';
 
 const initialFormState: CourseType = {
 	id: '',
@@ -32,14 +41,37 @@ const initialFormState: CourseType = {
 	authors: [],
 };
 
-const CreateCourse: React.FC = () => {
-	const { allAuthors, creationCoursesHandler } = useSharedState();
+const CourseForm: React.FC = () => {
+	const { courseId } = useParams<{ courseId: string }>();
+	const { token, courses } = useSharedState();
+	const {
+		authors: allAuthors,
+		status: authorsLoading,
+		error: authorsError,
+	} = useAuthorsHook();
 	const [authors, setAuthors] = useState<AuthorType[]>(allAuthors);
 	const [newCourse, setNewCourse] = useState<CourseType>(initialFormState);
 	const [courseAuthors, setCourseAuthors] = useState<AuthorType[]>([]);
 	const [newAuthor, setNewAuthor] = useState('');
 
 	const dispatch = useAppDispatch();
+	const navigate = useNavigate();
+
+	const updatedCourse = courses.find((course) => course.id === courseId);
+
+	useEffect(() => {
+		if (updatedCourse) {
+			setNewCourse(updatedCourse);
+			const filteredCourseAuthors = allAuthors.filter((author) =>
+				updatedCourse.authors.includes(author.id)
+			);
+			const filteredAllAuthors = allAuthors.filter(
+				(author) => !updatedCourse.authors.includes(author.id)
+			);
+			setCourseAuthors(filteredCourseAuthors);
+			setAuthors(filteredAllAuthors);
+		}
+	}, [allAuthors, updatedCourse]);
 
 	const handlerTitleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
 		setNewCourse({ ...newCourse, title: e.target.value });
@@ -66,11 +98,37 @@ const CreateCourse: React.FC = () => {
 		const authorIDs = courseAuthors.map((author) => author.id);
 		const updatedCourse = {
 			...newCourse,
-			id: uuid(),
 			creationDate: formatDate(new Date()),
 			authors: authorIDs,
 		};
 		return updatedCourse;
+	};
+
+	const updateCourseHandler = async (
+		newCourse: CourseType,
+		id: string,
+		token: string
+	) => {
+		const result = await dispatch(
+			updateCourseRequest({ course: newCourse, id, token })
+		);
+		if (updateCourseRequest.fulfilled.match(result)) {
+			navigate('/courses');
+			setNewCourse(initialFormState);
+		}
+	};
+
+	const creationCoursesHandler = async (
+		newCourse: CourseType,
+		token: string
+	) => {
+		const result = await dispatch(
+			addCourseRequest({ course: newCourse, token })
+		);
+		if (addCourseRequest.fulfilled.match(result)) {
+			navigate('/courses');
+			setNewCourse(initialFormState);
+		}
 	};
 
 	const formSubmitHandler = () => {
@@ -78,15 +136,22 @@ const CreateCourse: React.FC = () => {
 			alert('Please, fill in all fields');
 			return;
 		}
+
 		const addNewCourse = addProperties();
-		creationCoursesHandler(addNewCourse, courseAuthors);
-		setNewCourse(initialFormState);
+		if (courseId && token) {
+			updateCourseHandler(addNewCourse, courseId, token);
+			return;
+		}
+		if (token && !courseId) {
+			creationCoursesHandler(addNewCourse, token);
+			return;
+		}
 	};
 
 	const handlerAuthorChange = (e: React.ChangeEvent<HTMLInputElement>) => {
 		setNewAuthor(e.target.value);
 	};
-	const authorCreationHandler = () => {
+	const authorCreationHandler = async () => {
 		if (newAuthor.length < 2) {
 			alert('Too short name');
 			return;
@@ -95,13 +160,16 @@ const CreateCourse: React.FC = () => {
 			alert('This author is already been');
 			return;
 		}
-		const newAuthorData: AuthorType = {
-			id: uuid(),
+		const authorData: AuthorRequestType = {
 			name: newAuthor,
 		};
-		setAuthors([...authors, newAuthorData]);
-		dispatch(addAuthor([newAuthorData]));
-		setNewAuthor('');
+		if (token) {
+			const result = await dispatch(addAuthorRequest({ authorData, token }));
+			if (addAuthorRequest.fulfilled.match(result)) {
+				dispatch(getAuthorsRequest());
+				setNewAuthor('');
+			}
+		}
 	};
 	const authorInsertHandler = (author: AuthorType) => {
 		setCourseAuthors([...courseAuthors, author]);
@@ -112,8 +180,11 @@ const CreateCourse: React.FC = () => {
 		setAuthors([...authors, author]);
 	};
 
+	if (authorsLoading) return <Loader />;
+
 	return (
 		<div>
+			{authorsError && <p>Some error here: {authorsError}</p>}
 			<StyledFormWrapper>
 				<StyledTitleWrapper>
 					<StyledInnerWrapper>
@@ -126,7 +197,9 @@ const CreateCourse: React.FC = () => {
 						/>
 					</StyledInnerWrapper>
 					<Button
-						text={BUTTONS_TEXT.CREATE_COURSE}
+						text={
+							courseId ? BUTTONS_TEXT.UPDATE_COURSE : BUTTONS_TEXT.CREATE_COURSE
+						}
 						onClick={formSubmitHandler}
 					/>
 				</StyledTitleWrapper>
@@ -211,4 +284,4 @@ const CreateCourse: React.FC = () => {
 	);
 };
 
-export default CreateCourse;
+export default CourseForm;
