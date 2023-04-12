@@ -11,9 +11,10 @@ import SearchBar from './components/SearchBar/SearchBar';
 import { StyledCourses, StyledHeadingCourses } from './Courses.style';
 
 import { useSharedState } from '../../hooks/useSharedState';
+import Loader from '../../common/Loader/Loader';
 
 const Courses: React.FC = () => {
-	const { courses, role } = useSharedState();
+	const { courses, role, coursesError, coursesLoading } = useSharedState();
 
 	const [filteredCourses, setFilteredCourses] = useState(courses);
 
@@ -39,7 +40,9 @@ const Courses: React.FC = () => {
 					<Button text={BUTTONS_TEXT.ADD} onClick={addingCourseHandler} />
 				)}
 			</StyledHeadingCourses>
-			{filteredCourses.length ? (
+			{coursesLoading && <Loader />}
+			{coursesError && <p>Ooops! It's an error: {coursesError} </p>}
+			{coursesLoading && coursesError && filteredCourses.length ? (
 				filteredCourses.map((course) => (
 					<CourseCard key={course.id} course={course} />
 				))

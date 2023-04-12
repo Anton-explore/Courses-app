@@ -6,11 +6,7 @@ import { selectCoursesState } from '../store/selectors';
 
 const useCoursesHook = () => {
 	const dispatch = useAppDispatch();
-	const {
-		courses,
-		status: courseStatus,
-		error: courseError,
-	} = useAppSelector(selectCoursesState);
+	const { courses, status, error } = useAppSelector(selectCoursesState);
 
 	useEffect(() => {
 		dispatch(getCoursesRequest());
@@ -18,8 +14,8 @@ const useCoursesHook = () => {
 
 	return {
 		courses,
-		status: courseStatus,
-		error: courseError,
+		status,
+		error,
 	};
 };
 

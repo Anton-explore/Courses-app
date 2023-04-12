@@ -85,6 +85,8 @@ export interface GlobalSharedContext {
 	allAuthors: AuthorType[];
 	handleLogin: () => void;
 	userError: string | null;
+	coursesError: string | null;
+	coursesLoading: boolean;
 	userLoading: boolean;
 }
 

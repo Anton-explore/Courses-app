@@ -46,7 +46,11 @@ function App() {
 		error: userError,
 	} = useUserHook();
 
-	const { courses, error: coursesError } = useCoursesHook();
+	const {
+		courses,
+		error: coursesError,
+		status: coursesLoading,
+	} = useCoursesHook();
 	const [isLoading, setIsLoading] = useState<boolean>(false);
 
 	const navigate = useNavigate();
@@ -90,6 +94,8 @@ function App() {
 				handleLogin,
 				userError,
 				userLoading,
+				coursesError,
+				coursesLoading,
 			}}
 		>
 			<StyledWrapper>
