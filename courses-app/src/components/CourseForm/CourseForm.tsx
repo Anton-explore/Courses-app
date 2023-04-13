@@ -18,19 +18,19 @@ import {
 	StyledFormWrapper,
 } from './CourseForm.style';
 
-import { useSharedState } from '../../hooks/useSharedState';
 import {
 	addAuthorRequest,
 	getAuthorsRequest,
 } from '../../store/authors/authorsSlice';
 import { useNavigate, useParams } from 'react-router-dom';
-import { useAppDispatch } from '../../hooks/reduxHooks';
+import { useAppDispatch, useAppSelector } from '../../hooks/reduxHooks';
 import {
 	addCourseRequest,
 	updateCourseRequest,
 } from '../../store/courses/coursesSlice';
 import useAuthorsHook from '../../hooks/useAuthorsHook';
 import Loader from '../../common/Loader/Loader';
+import { selectCourses, selectToken } from '../../store/selectors';
 
 const initialFormState: CourseType = {
 	id: '',
@@ -43,7 +43,8 @@ const initialFormState: CourseType = {
 
 const CourseForm: React.FC = () => {
 	const { courseId } = useParams<{ courseId: string }>();
-	const { token, courses } = useSharedState();
+	const token = useAppSelector(selectToken);
+	const courses = useAppSelector(selectCourses);
 	const {
 		authors: allAuthors,
 		status: authorsLoading,
@@ -180,11 +181,8 @@ const CourseForm: React.FC = () => {
 		setAuthors([...authors, author]);
 	};
 
-	if (authorsLoading) return <Loader />;
-
 	return (
 		<div>
-			{authorsError && <p>Some error here: {authorsError}</p>}
 			<StyledFormWrapper>
 				<StyledTitleWrapper>
 					<StyledInnerWrapper>
@@ -251,15 +249,21 @@ const CourseForm: React.FC = () => {
 					<StyledAuthorBlock>
 						<h3>Authors</h3>
 						<StyledDataInnerWrapper>
-							{authors.map((author) => (
-								<StyledAuthorChange key={author.id}>
-									<p>{author.name}</p>
-									<Button
-										text={BUTTONS_TEXT.ADD_AUTHOR}
-										onClick={() => authorInsertHandler(author)}
-									/>
-								</StyledAuthorChange>
-							))}
+							{authorsError && (
+								<p>Ooops!! Some error occurred! {authorsError}</p>
+							)}
+							{authorsLoading && <Loader />}
+							{!authorsLoading &&
+								!authorsError &&
+								authors.map((author) => (
+									<StyledAuthorChange key={author.id}>
+										<p>{author.name}</p>
+										<Button
+											text={BUTTONS_TEXT.ADD_AUTHOR}
+											onClick={() => authorInsertHandler(author)}
+										/>
+									</StyledAuthorChange>
+								))}
 						</StyledDataInnerWrapper>
 						<h3>Course authors</h3>
 						<StyledDataInnerWrapper>

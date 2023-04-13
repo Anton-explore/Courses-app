@@ -6,12 +6,15 @@ import { Input } from '../../../../common/Input/Input';
 import { BUTTONS_TEXT, INPUTS_TEXT } from '../../../../constants';
 import { SearchBarProps } from '../../../../types';
 
-import { useSharedState } from '../../../../hooks/useSharedState';
+import { useAppSelector } from '../../../../hooks/reduxHooks';
+import { selectCourses } from '../../../../store/selectors';
+// import { useSharedState } from '../../../../hooks/useSharedState';
 
 import { SearchBarWrapper } from './SearchBar.style';
 
 const SearchBar: React.FC<SearchBarProps> = ({ onSearch }) => {
-	const { courses } = useSharedState();
+	// const { courses } = useSharedState();
+	const courses = useAppSelector(selectCourses);
 
 	const [searchTerm, setSearchTerm] = useState('');
 

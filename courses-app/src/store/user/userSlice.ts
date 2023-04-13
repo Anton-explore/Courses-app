@@ -47,7 +47,7 @@ const initialState: UserState = {
 	name: '',
 	email: '',
 	token: '',
-	role: '',
+	isAdmin: false,
 	isAuth: false,
 	status: false,
 	error: null,
@@ -94,7 +94,7 @@ const userSlice = createSlice({
 					state.token = localToken ? localToken : state.token;
 					state.email = payload.result.email;
 					state.name = payload.result.name ? payload.result.name : 'Admin';
-					state.role = payload.result.role;
+					state.isAdmin = payload.result.role === 'admin' ? true : false;
 				}
 			)
 			.addCase(getCurrentUserRequest.rejected, rejectHandler)
@@ -106,7 +106,7 @@ const userSlice = createSlice({
 				state.token = '';
 				state.name = '';
 				state.email = '';
-				state.role = '';
+				state.isAdmin = false;
 				localStorage.removeItem('token');
 				localStorage.removeItem('userName');
 				localStorage.removeItem('email');

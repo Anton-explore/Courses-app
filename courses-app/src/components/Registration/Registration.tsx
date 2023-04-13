@@ -9,13 +9,16 @@ import { BUTTONS_TEXT, INPUTS_TEXT } from '../../constants';
 import { validatePassword } from '../../helpers/loginFormValidation';
 
 import { StyledForm } from '../Login/Login.style';
-import { useSharedState } from '../../hooks/useSharedState';
+
 import Loader from '../../common/Loader/Loader';
+
 import { useAppDispatch } from '../../hooks/reduxHooks';
+import useUserHook from '../../hooks/useUserHook';
+
 import { registerRequest } from '../../store/user/userSlice';
 
 const Registration: React.FC = () => {
-	const { userLoading, userError } = useSharedState();
+	const { status: userLoading, error: userError } = useUserHook();
 
 	const navigate = useNavigate();
 	const dispatch = useAppDispatch();

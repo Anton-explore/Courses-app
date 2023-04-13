@@ -1,8 +1,10 @@
 import { Button } from '../../common/Button/Button';
 
-import { BUTTONS_TEXT } from '../../constants';
-import { useSharedState } from '../../hooks/useSharedState';
+import { useAppDispatch, useAppSelector } from '../../hooks/reduxHooks';
+import { selectToken, selectUserName } from '../../store/selectors';
+import { logOutRequest } from '../../store/user/userSlice';
 
+import { BUTTONS_TEXT } from '../../constants';
 import { Logo } from './components/Logo/Logo';
 
 import {
@@ -12,7 +14,14 @@ import {
 } from './Header.style';
 
 const Header: React.FC = () => {
-	const { userName, handleLogout } = useSharedState();
+	const userName = useAppSelector(selectUserName);
+	const token = useAppSelector(selectToken);
+
+	const dispatch = useAppDispatch();
+
+	const handleLogout = () => {
+		token && dispatch(logOutRequest(token));
+	};
 
 	return (
 		<StyledHeaderWrapper>

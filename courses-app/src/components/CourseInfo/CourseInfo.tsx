@@ -1,9 +1,11 @@
 import React, { useState, useEffect } from 'react';
 import { useParams } from 'react-router-dom';
+
 import Loader from '../../common/Loader/Loader';
+
 import { formatDuration } from '../../helpers/pipeDuration';
-import { useSharedState } from '../../hooks/useSharedState';
 import { AuthorType, CourseType } from '../../types';
+
 import {
 	StyledCardWrapper,
 	StyledDataWrapper,
@@ -15,8 +17,12 @@ import {
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faChevronLeft } from '@fortawesome/free-solid-svg-icons';
 
+import { useAppSelector } from '../../hooks/reduxHooks';
+import { selectAuthors, selectCourses } from '../../store/selectors';
+
 const CourseInfo: React.FC = () => {
-	const { courses, allAuthors } = useSharedState();
+	const courses = useAppSelector(selectCourses);
+	const allAuthors = useAppSelector(selectAuthors);
 	const { courseId } = useParams<{ courseId: string }>();
 	const [course, setCourse] = useState<CourseType | null>(null);
 

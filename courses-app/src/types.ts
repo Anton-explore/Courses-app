@@ -73,23 +73,6 @@ export interface LoginValues {
 	password: string;
 }
 
-export interface GlobalSharedContext {
-	userName: string | null;
-	role: string;
-	handleLogout: () => Promise<void> | void;
-	token: string | null;
-	isAuth: boolean;
-	isLoading: boolean;
-	setIsLoading: React.Dispatch<React.SetStateAction<boolean>>;
-	courses: CourseType[];
-	allAuthors: AuthorType[];
-	handleLogin: () => void;
-	userError: string | null;
-	coursesError: string | null;
-	coursesLoading: boolean;
-	userLoading: boolean;
-}
-
 export type TokenResponse = {
 	successful: boolean;
 	result: string;
@@ -120,7 +103,7 @@ export interface UserState {
 	token: string;
 	name: string;
 	email: string;
-	role: string;
+	isAdmin: boolean;
 	status: boolean;
 	error: string | null;
 }
@@ -159,4 +142,10 @@ export type ChangeAuthorResponse = {
 export type DeleteResponse = {
 	successful: boolean;
 	result: string;
+};
+
+export type PrivateRouteProps = {
+	role: boolean | undefined;
+	redirectTo?: string;
+	component: JSX.Element;
 };

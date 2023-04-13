@@ -1,17 +1,12 @@
 import { Navigate } from 'react-router-dom';
-
-type PrivateRouteProps = {
-	role: string | undefined;
-	redirectTo?: string;
-	component: JSX.Element;
-};
+import { PrivateRouteProps } from '../../types';
 
 const PrivateRoute: React.FC<PrivateRouteProps> = ({
 	role,
 	redirectTo = '/courses',
 	component: Component,
 }) => {
-	return role === 'admin' ? Component : <Navigate to={redirectTo} />;
+	return role ? Component : <Navigate to={redirectTo} />;
 };
 
 export default PrivateRoute;

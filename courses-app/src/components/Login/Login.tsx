@@ -10,12 +10,14 @@ import { validateLogin } from '../../helpers/loginFormValidation';
 
 import { StyledForm } from './Login.style';
 
-import { useSharedState } from '../../hooks/useSharedState';
 import { useAppDispatch } from '../../hooks/reduxHooks';
 import { loginRequest } from '../../store/user/userSlice';
+import { getCoursesRequest } from '../../store/courses/coursesSlice';
+import { getAuthorsRequest } from '../../store/authors/authorsSlice';
+import useUserHook from '../../hooks/useUserHook';
 
 const Login: React.FC = () => {
-	const { handleLogin, userError } = useSharedState();
+	const { token, error: userError } = useUserHook();
 
 	const navigate = useNavigate();
 	const dispatch = useAppDispatch();
@@ -25,12 +27,19 @@ const Login: React.FC = () => {
 		password: '',
 	};
 
+	const handleLogin = () => {
+		if (token) {
+			dispatch(getCoursesRequest());
+			dispatch(getAuthorsRequest());
+		}
+	};
+
 	const onSubmit = async (formData: LoginValues) => {
 		const result = await dispatch(loginRequest(formData));
 		if (loginRequest.fulfilled.match(result)) {
+			handleLogin();
 			navigate('/courses');
 		}
-		handleLogin();
 	};
 
 	const validate = validateLogin;
