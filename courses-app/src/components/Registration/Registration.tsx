@@ -1,21 +1,27 @@
 import { useFormik } from 'formik';
-import { useNavigate, Link } from 'react-router-dom';
-import { useState } from 'react';
+import { Link, useNavigate } from 'react-router-dom';
 
 import { Input } from '../../common/Input/Input';
 import { Button } from '../../common/Button/Button';
 
 import { LoginValues } from '../../types';
 import { BUTTONS_TEXT, INPUTS_TEXT } from '../../constants';
-import { UserAPI } from '../../helpers/api';
 import { validatePassword } from '../../helpers/loginFormValidation';
 
 import { StyledForm } from '../Login/Login.style';
 
+import Loader from '../../common/Loader/Loader';
+
+import { useAppDispatch } from '../../hooks/reduxHooks';
+import useUserHook from '../../hooks/useUserHook';
+
+import { registerRequest } from '../../store/user/userSlice';
+
 const Registration: React.FC = () => {
-	const [authError, setAuthError] = useState<string | null>(null);
+	const { status: userLoading, error: userError } = useUserHook();
 
 	const navigate = useNavigate();
+	const dispatch = useAppDispatch();
 
 	const initialValues: LoginValues = {
 		name: '',
@@ -24,17 +30,9 @@ const Registration: React.FC = () => {
 	};
 
 	const onSubmit = async (formData: LoginValues) => {
-		try {
-			const response = await UserAPI.register(formData);
-			if (response.successful) {
-				navigate('/login');
-			}
-			return response;
-		} catch (error: any) {
-			setAuthError(
-				`Something goes wrong: ${error.message}. Please check server connection, or this user is already registered`
-			);
-			return;
+		const result = await dispatch(registerRequest(formData));
+		if (registerRequest.fulfilled.match(result)) {
+			navigate('/login');
 		}
 	};
 
@@ -46,7 +44,9 @@ const Registration: React.FC = () => {
 		onSubmit,
 	});
 
-	return (
+	return userLoading ? (
+		<Loader />
+	) : (
 		<StyledForm onSubmit={formik.handleSubmit}>
 			<h2>Registration</h2>
 			<Input
@@ -78,7 +78,12 @@ const Registration: React.FC = () => {
 			{formik.touched.password && formik.errors.password ? (
 				<div>{formik.errors.password}</div>
 			) : null}
-			{authError && <div>{authError}</div>}
+			{userError && (
+				<div>
+					Something goes wrong: {userError}. Please check server connection, or
+					this user is already registered
+				</div>
+			)}
 			<Button type='submit' text={BUTTONS_TEXT.REG} />
 			<p>
 				If you have an account you can <Link to='/login'>Login</Link>

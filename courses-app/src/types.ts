@@ -1,5 +1,5 @@
 export interface CourseType {
-	id: string;
+	id?: string;
 	title: string;
 	description: string;
 	creationDate: string;
@@ -9,6 +9,8 @@ export interface CourseType {
 
 export interface CoursesState {
 	courses: CourseType[];
+	status: boolean;
+	error: string | null;
 }
 
 export type AuthorType = {
@@ -16,8 +18,14 @@ export type AuthorType = {
 	name: string;
 };
 
+export type AuthorRequestType = {
+	name: string;
+};
+
 export interface AuthorsState {
 	authors: AuthorType[];
+	status: boolean;
+	error: string | null;
 }
 
 export type CoursesResponseType = {
@@ -65,23 +73,6 @@ export interface LoginValues {
 	password: string;
 }
 
-export interface GlobalSharedContext {
-	userName: string | null;
-	setUserName?: React.Dispatch<React.SetStateAction<any>>;
-	handleLogout: () => Promise<void> | void;
-	token: string | null;
-	setToken?: React.Dispatch<React.SetStateAction<any>>;
-	isLoading: boolean;
-	setIsLoading: React.Dispatch<React.SetStateAction<boolean>>;
-	courses: CourseType[];
-	allAuthors: AuthorType[];
-	creationCoursesHandler: (
-		course: CourseType,
-		courseAuthors: AuthorType[]
-	) => void;
-	handleLogin: (response: TokenResponse) => void;
-}
-
 export type TokenResponse = {
 	successful: boolean;
 	result: string;
@@ -99,10 +90,62 @@ export type UserDetailResponse = {
 	successful: boolean;
 };
 
-export type UserType = {
+export interface LoginValues {
+	name?: string;
+	email: string;
+	password: string;
+}
+
+export type UserRegResponse = { successful: boolean; result: string };
+
+export interface UserState {
 	isAuth: boolean;
 	token: string;
 	name: string;
 	email: string;
-	// error: string;
+	isAdmin: boolean;
+	status: boolean;
+	error: string | null;
+}
+
+export type ChangeCourseResponse = {
+	successful: boolean;
+	result: CourseType;
+};
+
+export type ChangingCourseDataType = {
+	course: CourseType;
+	token: string;
+};
+
+export type UpdatingCourseDataType = {
+	course: CourseType;
+	id: string;
+	token: string;
+};
+
+export type DeletingDataType = {
+	id: string;
+	token: string;
+};
+
+export type ChangingAuthorDataType = {
+	authorData: AuthorRequestType;
+	token: string;
+};
+
+export type ChangeAuthorResponse = {
+	successful: boolean;
+	result: AuthorType;
+};
+
+export type DeleteResponse = {
+	successful: boolean;
+	result: string;
+};
+
+export type PrivateRouteProps = {
+	role: boolean | undefined;
+	redirectTo?: string;
+	component: JSX.Element;
 };

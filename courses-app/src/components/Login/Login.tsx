@@ -1,4 +1,3 @@
-import { useState } from 'react';
 import { useFormik } from 'formik';
 import { useNavigate, Link } from 'react-router-dom';
 
@@ -8,32 +7,38 @@ import { Button } from '../../common/Button/Button';
 import { BUTTONS_TEXT, INPUTS_TEXT } from '../../constants';
 import { LoginValues } from '../../types';
 import { validateLogin } from '../../helpers/loginFormValidation';
-import { UserAPI } from '../../helpers/api';
 
 import { StyledForm } from './Login.style';
 
-import { useSharedState } from '../../hooks/useSharedState';
+import { useAppDispatch } from '../../hooks/reduxHooks';
+import { loginRequest } from '../../store/user/userSlice';
+import { getCoursesRequest } from '../../store/courses/coursesSlice';
+import { getAuthorsRequest } from '../../store/authors/authorsSlice';
+import useUserHook from '../../hooks/useUserHook';
 
 const Login: React.FC = () => {
-	const { handleLogin } = useSharedState();
-	const [loginError, setLoginError] = useState<string | null>(null);
+	const { token, error: userError } = useUserHook();
+
 	const navigate = useNavigate();
+	const dispatch = useAppDispatch();
 
 	const initialValues: LoginValues = {
 		email: '',
 		password: '',
 	};
 
+	const handleLogin = () => {
+		if (token) {
+			dispatch(getCoursesRequest());
+			dispatch(getAuthorsRequest());
+		}
+	};
+
 	const onSubmit = async (formData: LoginValues) => {
-		try {
-			const response = await UserAPI.login(formData);
-			const { result, user, successful } = response;
-			handleLogin({ result, user, successful });
+		const result = await dispatch(loginRequest(formData));
+		if (loginRequest.fulfilled.match(result)) {
+			handleLogin();
 			navigate('/courses');
-			return response;
-		} catch (error: any) {
-			setLoginError(`You need register first: ${error.message}`);
-			return;
 		}
 	};
 
@@ -68,7 +73,7 @@ const Login: React.FC = () => {
 			{formik.touched.password && formik.errors.password ? (
 				<div>{formik.errors.password}</div>
 			) : null}
-			{loginError && <div>{loginError}</div>}
+			{userError && <div>You need register first: {userError}</div>}
 			<Button text={BUTTONS_TEXT.IN} />
 			<p>
 				If you don't have an account you can{' '}
