@@ -78,3 +78,60 @@ export const INPUTS_TEXT = {
 	PASS: 'Password',
 	PASS_PLH: 'Enter password',
 };
+
+export const mockCourses = [
+	{
+		id: '3',
+		title: 'title',
+		description: 'descriptionTest1',
+		creationDate: '3/4/2023',
+		duration: 120,
+		authors: [
+			'27cc3006-e93a-4748-8ca8-73d06aa93b6d',
+			'095a1817-d45b-4ed7-9cf7-b2417bcbf748',
+		],
+	},
+	{
+		id: '4',
+		title: 'title2',
+		description: 'descriptionTest2',
+		creationDate: '3/4/2023',
+		duration: 90,
+		authors: [
+			'27cc3006-e93a-4748-8ca8-73d06aa93b6d',
+			'095a1817-d45b-4ed7-9cf7-b2417bcbf748',
+		],
+	},
+];
+
+export const mockedState1 = {
+	user: {
+		isAuth: true,
+		name: 'Test User',
+		isAdmin: true,
+	},
+	courses: { courses: mockCourses, coursesError: null, coursesLoading: false },
+	authors: {
+		authors: mockedAuthorsList,
+		authorsLoading: false,
+		authorsError: null,
+	},
+};
+
+export const mockedState2 = {
+	user: {
+		isAuth: true,
+		name: 'Test User',
+		isAdmin: true,
+	},
+	courses: {
+		coursesError: null,
+		courses: [],
+		coursesLoading: false,
+	},
+	authors: {
+		authors: mockedAuthorsList,
+		authorsLoading: false,
+		authorsError: null,
+	},
+};

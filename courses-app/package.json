@@ -2,6 +2,7 @@
   "name": "courses-app",
   "version": "0.1.0",
   "private": true,
+  "type": "module",
   "dependencies": {
     "@fortawesome/fontawesome-svg-core": "^6.4.0",
     "@fortawesome/free-solid-svg-icons": "^6.4.0",
@@ -9,17 +10,18 @@
     "@redux-devtools/extension": "^3.2.5",
     "@reduxjs/toolkit": "^1.9.3",
     "@testing-library/jest-dom": "^5.16.5",
-    "@testing-library/react": "^13.4.0",
     "@testing-library/user-event": "^13.5.0",
     "@types/jest": "^27.5.2",
     "@types/node": "^16.18.16",
     "@types/react": "^18.0.28",
     "@types/react-dom": "^18.0.11",
     "@types/react-router-dom": "^5.3.3",
+    "@types/redux-mock-store": "^1.0.3",
     "@types/styled-components": "^5.1.26",
     "@types/uuid": "^9.0.1",
     "axios": "^1.3.4",
     "formik": "^2.2.9",
+    "jest": "^27.5.1",
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
     "react-loader-spinner": "^5.3.4",
@@ -27,6 +29,7 @@
     "react-router-dom": "^6.10.0",
     "react-scripts": "5.0.1",
     "redux": "^4.2.1",
+    "redux-mock-store": "^1.5.4",
     "styled-components": "^5.3.9",
     "typescript": "^4.9.5",
     "uuid": "^9.0.0",
@@ -35,13 +38,13 @@
   "scripts": {
     "start": "react-scripts start",
     "build": "react-scripts build",
-    "test": "react-scripts test",
+    "test": "react-scripts test --verbose --transformIgnorePatterns 'node_modules/(?!axios)/'",
+    "test:nowatch": "react-scripts test --watchAll=false --transformIgnorePatterns 'node_modules/(?!axios)/'",
     "eject": "react-scripts eject",
     "eslint": "eslint --ext .js --ext .jsx src",
     "eslint:fix": "eslint --fix --ext .js --ext .jsx src",
-    "test:nowatch": "react-scripts test --watchAll=false",
     "prepare": "husky install",
-    "prepublish": "npm run eslint:fix"
+    "prepublish": "npm run eslint:fix && npm run test:nowatch"
   },
   "eslintConfig": {
     "extends": [
@@ -62,6 +65,7 @@
     ]
   },
   "devDependencies": {
+    "@testing-library/react": "^14.0.0",
     "@types/react-redux": "^7.1.25",
     "eslint": "^8.37.0",
     "eslint-config-airbnb": "^19.0.4",
@@ -72,6 +76,7 @@
     "eslint-plugin-react": "^7.32.2",
     "eslint-plugin-react-hooks": "^4.6.0",
     "husky": "^8.0.3",
+    "jest-fetch-mock": "^3.0.3",
     "prettier": "^2.8.4"
   }
 }

@@ -1,4 +1,5 @@
 import { useState, useEffect } from 'react';
+import { useNavigate, useParams } from 'react-router-dom';
 
 import { Button } from '../../common/Button/Button';
 import { Input } from '../../common/Input/Input';
@@ -22,7 +23,6 @@ import {
 	addAuthorRequest,
 	getAuthorsRequest,
 } from '../../store/authors/authorsSlice';
-import { useNavigate, useParams } from 'react-router-dom';
 import { useAppDispatch, useAppSelector } from '../../hooks/reduxHooks';
 import {
 	addCourseRequest,
@@ -30,7 +30,8 @@ import {
 } from '../../store/courses/coursesSlice';
 import useAuthorsHook from '../../hooks/useAuthorsHook';
 import Loader from '../../common/Loader/Loader';
-import { selectCourses, selectToken } from '../../store/selectors';
+import { selectToken } from '../../store/selectors';
+import useCoursesHook from '../../hooks/useCoursesHook';
 
 const initialFormState: CourseType = {
 	id: '',
@@ -44,7 +45,7 @@ const initialFormState: CourseType = {
 const CourseForm: React.FC = () => {
 	const { courseId } = useParams<{ courseId: string }>();
 	const token = useAppSelector(selectToken);
-	const courses = useAppSelector(selectCourses);
+	const { courses } = useCoursesHook();
 	const {
 		authors: allAuthors,
 		status: authorsLoading,
@@ -248,7 +249,7 @@ const CourseForm: React.FC = () => {
 					</StyledAuthorBlock>
 					<StyledAuthorBlock>
 						<h3>Authors</h3>
-						<StyledDataInnerWrapper>
+						<StyledDataInnerWrapper data-testid='all-authors'>
 							{authorsError && (
 								<p>Ooops!! Some error occurred! {authorsError}</p>
 							)}
@@ -256,7 +257,10 @@ const CourseForm: React.FC = () => {
 							{!authorsLoading &&
 								!authorsError &&
 								authors.map((author) => (
-									<StyledAuthorChange key={author.id}>
+									<StyledAuthorChange
+										data-testid='all-authors-author'
+										key={author.id}
+									>
 										<p>{author.name}</p>
 										<Button
 											text={BUTTONS_TEXT.ADD_AUTHOR}
@@ -266,10 +270,13 @@ const CourseForm: React.FC = () => {
 								))}
 						</StyledDataInnerWrapper>
 						<h3>Course authors</h3>
-						<StyledDataInnerWrapper>
+						<StyledDataInnerWrapper data-testid='course-authors'>
 							{courseAuthors.length ? (
 								courseAuthors.map((author) => (
-									<StyledAuthorChange key={author.id}>
+									<StyledAuthorChange
+										data-testid='course-authors-author'
+										key={author.id}
+									>
 										<p>{author.name}</p>
 										<Button
 											text={BUTTONS_TEXT.DEL_AUTHOR}
