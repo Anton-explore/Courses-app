@@ -5,7 +5,6 @@ import { CourseCardType } from '../../../../types';
 import { BUTTONS_TEXT } from '../../../../constants';
 import { formatDuration } from '../../../../helpers/pipeDuration';
 import { formatAuthors } from '../../../../helpers/authorFormatHelper';
-// import { useSharedState } from '../../../../hooks/useSharedState';
 
 import { Button } from '../../../../common/Button/Button';
 
@@ -18,14 +17,11 @@ import {
 } from './CourseCard.style';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faPen, faTrash } from '@fortawesome/free-solid-svg-icons';
-import { useAppDispatch, useAppSelector } from '../../../../hooks/reduxHooks';
+import { useAppDispatch } from '../../../../hooks/reduxHooks';
 import { deleteCourseRequest } from '../../../../store/courses/coursesSlice';
 import useUserHook from '../../../../hooks/useUserHook';
-import { selectAuthors } from '../../../../store/selectors';
 
-const CourseCard: FC<CourseCardType> = ({ course }) => {
-	// const { allAuthors, token, role } = useSharedState();
-	const allAuthors = useAppSelector(selectAuthors);
+const CourseCard: FC<CourseCardType> = ({ course, allAuthors }) => {
 	const { token, isAdmin } = useUserHook();
 	const { id, title, duration, creationDate, description, authors } = course;
 

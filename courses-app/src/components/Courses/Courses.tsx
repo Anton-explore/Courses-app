@@ -14,6 +14,7 @@ import useCoursesHook from '../../hooks/useCoursesHook';
 import useUserHook from '../../hooks/useUserHook';
 
 import Loader from '../../common/Loader/Loader';
+import useAuthorsHook from '../../hooks/useAuthorsHook';
 
 const Courses: React.FC = () => {
 	const {
@@ -21,6 +22,7 @@ const Courses: React.FC = () => {
 		error: coursesError,
 		status: coursesLoading,
 	} = useCoursesHook();
+	const { authors: allAuthors } = useAuthorsHook();
 	const { isAdmin } = useUserHook();
 
 	const [filteredCourses, setFilteredCourses] = useState(courses);
@@ -51,7 +53,7 @@ const Courses: React.FC = () => {
 			{coursesError && <p>Ooops! It's an error: {coursesError} </p>}
 			{!coursesLoading && !coursesError && filteredCourses.length ? (
 				filteredCourses.map((course) => (
-					<CourseCard key={course.id} course={course} />
+					<CourseCard key={course.id} course={course} allAuthors={allAuthors} />
 				))
 			) : (
 				<p>Sorry, i can't find anything</p>

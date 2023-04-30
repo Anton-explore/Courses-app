@@ -57,7 +57,7 @@ describe('Course card tests', () => {
 		render(
 			<Provider store={mockedStore}>
 				<BrowserRouter>
-					<CourseCard course={course} />
+					<CourseCard course={course} allAuthors={mockedAuthorsList} />
 				</BrowserRouter>
 			</Provider>
 		);
@@ -70,7 +70,7 @@ describe('Course card tests', () => {
 		render(
 			<Provider store={mockedStore}>
 				<BrowserRouter>
-					<CourseCard course={course} />
+					<CourseCard course={course} allAuthors={mockedAuthorsList} />
 				</BrowserRouter>
 			</Provider>
 		);
@@ -83,7 +83,7 @@ describe('Course card tests', () => {
 		render(
 			<Provider store={mockedStore}>
 				<BrowserRouter>
-					<CourseCard course={course} />
+					<CourseCard course={course} allAuthors={mockedAuthorsList} />
 				</BrowserRouter>
 			</Provider>
 		);
@@ -96,7 +96,7 @@ describe('Course card tests', () => {
 		render(
 			<Provider store={mockedStore}>
 				<BrowserRouter>
-					<CourseCard course={course} />
+					<CourseCard course={course} allAuthors={mockedAuthorsList} />
 				</BrowserRouter>
 			</Provider>
 		);
@@ -109,7 +109,7 @@ describe('Course card tests', () => {
 		render(
 			<Provider store={mockedStore}>
 				<BrowserRouter>
-					<CourseCard course={course} />
+					<CourseCard course={course} allAuthors={mockedAuthorsList} />
 				</BrowserRouter>
 			</Provider>
 		);

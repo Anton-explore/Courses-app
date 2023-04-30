@@ -60,6 +60,7 @@ export type SearchBarProps = {
 
 export type CourseCardType = {
 	course: CourseType;
+	allAuthors: AuthorType[];
 };
 
 export type CreateCourseProps = {
