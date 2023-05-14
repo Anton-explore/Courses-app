@@ -2,11 +2,64 @@
 
 Educational React Project
 
-### HOMEWORK 3
+# HOMEWORK 5
+
+## Criteria (20 points max)
+
+Add test for **Header**:
+
+[2 points] - Header should have logo and user's name.
+
+Add tests for **CourseCard**:
+
+[1 point] - CourseCard should display title.
+
+[1 point] - CourseCard should display description.
+
+[1 point] - CourseCard should display duration in the correct format.
+
+[1 point] - CourseCard should display authors list.
+
+[1 point] - CourseCard should display created date in the correct format.
+
+Add tests for **Courses**:
+
+[2 points] - Courses should display amount of CourseCard equal length of courses array.
+
+[1 point] - Courses should display Empty container if courses array length is 0.
+
+[2 points] - CourseForm should be showed after a click on a button "Add new course".
+
+Add test for **coursesReducer**:
+
+[1 point] - reducer should return the initial state.
+
+[1 point] - reducer should handle SAVE_COURSE and returns new state.
+
+[1 point] - reducer should handle GET_COURSES and returns new state
+
+Script in the **package.json**:
+
+[5 points] - pre-commit hook works correctly:
+There is no ability to commit changes if some of unit tests are failed.
+
+EXTRA TASK:
+
+Add tests for **CourseForm**:
+
+**CourseForm** should show authors lists (all and course authors).
+
+**CourseForm** 'Create author' click button should call dispatch.
+
+**CourseForm** 'Add author' button click should add an author to course authors list.
+
+**CourseForm** 'Delete author' button click should delete an author from the course list.
+
+# HOMEWORK 3
 
 ## Criteria (15 points max)
 
-# APIs
+### APIs
 
 1. [ ] [2 points] - All functionality with back-end should be in services.js. (Create api service for each endpoint that you use and call methods or functions from service into your components.)
 
@@ -66,11 +119,11 @@ Courses Component
 9. [ ] [1 point] - Add a new button "Delete course" into CourseCard. (CourseCard in COMPONENTS).
 10. [ ] [1 point] - After clicking on the Delete course button a selected course should be deleted from store.
 
-### HOMEWORK 1
+# HOMEWORK 1
 
 ## Criteria (20 points max)
 
-# Common
+### Common
 
 [1 point] - The architecture of the application should be the same as presented above.
 [1 point] - Components are presented as function components (not class components).
